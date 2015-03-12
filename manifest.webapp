@@ -1,0 +1,13 @@
+{
+	"name": "Nimbus",
+	"description": "Nimbus is a simple and powerful weather app.",
+	"launch_path": "/index.html",
+	"icons": {
+		"128": "/icon128.png"
+	},
+	"developer": {
+		"name": "Corbin Davenport",
+		"url": "http://www.corbindavenport.com/"
+	},
+	"default_locale": "en"
+}

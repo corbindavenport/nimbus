@@ -1,0 +1,19 @@
+{
+	"name": "Nimbus",
+	"description": "Nimbus is a simple and powerful weather app for Android, Firefox, and Chrome.",
+	"version": "1.0",
+	"minimum_chrome_version": "25",
+	"manifest_version": 2,
+	"permissions": [
+		"unlimitedStorage"
+	],
+	"app": {
+    "urls": [
+      "http://corbindavenport.github.io/nimbus/"
+    ],
+    "launch": {
+      "web_url": "http://corbindavenport.github.io/nimbus/"
+    }
+  },
+	"icons": {"128": "icon128.png" }
+}

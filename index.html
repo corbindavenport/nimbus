@@ -1,0 +1,169 @@
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+	<script type="text/javascript" src="js/jquery-2.1.3.min.js"></script>
+	<script type="text/javascript" src="js/materialize.min.js"></script>
+	<script type="text/javascript" src="js/jquery.simpleWeather.min.js"></script>
+	<script type="text/javascript" src="js/farbtastic.js"></script>
+	<link type="text/css" rel="stylesheet" href="css/materialize.css"  media="screen,projection"/>
+	<link type="text/css" rel="stylesheet" href="css/nimbus.css"  media="screen,projection"/>
+	<title>Nimbus</title>
+	<link rel="apple-touch-icon" sizes="57x57" href="img/apple-touch-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="img/apple-touch-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="img/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="img/apple-touch-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="img/apple-touch-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="img/apple-touch-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="img/apple-touch-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="img/apple-touch-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon-180x180.png">
+	<link rel="icon" type="image/png" href="img/favicon-32x32.png" sizes="32x32">
+	<link rel="icon" type="image/png" href="img/android-chrome-192x192.png" sizes="192x192">
+	<link rel="icon" type="image/png" href="img/favicon-96x96.png" sizes="96x96">
+	<link rel="icon" type="image/png" href="img/favicon-16x16.png" sizes="16x16">
+	<link rel="manifest" href="webmanifest.json">
+	<link rel="shortcut icon" href="img/favicon.ico">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="img/mstile-144x144.png">
+	<meta name="msapplication-config" content="browserconfig.xml">
+	<meta name="theme-color" content="#13A38D">
+	<meta property="og:title" content="Nimbus Weather" />
+	<meta property="og:image" content="icon128.png" />
+	<meta property="og:description" content="Simple and powerful weather app for Android, Firefox, and Chrome." />
+</head>
+<body>
+
+<div id="warning" class="modal">
+	<p>Your browser is not supported by Nimbus, please update your browser.</p>
+	<p>Please update to the latest versions of Internet Explorer, Chrome, Firefox, or Opera.</p>
+	<a class="waves-effect btn-flat modal-close">Close</a>
+</div>
+
+<div id="welcome" class="modal">
+	<p>Welcome to Nimbus, a simple (but powerful) weather app.</p>
+	<p>Your location is currently set to New York. You can change your location by tapping the Settings button on the lower right corner.</p>
+	<a class="waves-effect btn-flat modal-close">Close</a>
+</div>
+
+<div id="paypalmodal" class="modal">
+	<p>Thank you for considering donating! This will open PayPal's website in a new window.</p>
+	<a class="waves-effect btn-flat modal-close">Cancel</a>
+	<a href="http://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=4SZVSMJKDS35J&lc=US&item_name=Nimbus%20Donation&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted" target="_blank" class="waves-effect btn-flat">Continue</a>
+</div>
+
+<div id="bitcoinmodal" class="modal">
+	<p>Please send bitcoin to this address:</p>
+	<p style="text-align:center;"><img src="img/qr.png" /></p>
+	<p style="font-family:Monaco,Menlo,Consolas,'Courier New',monospace; text-align:center; overflow-wrap:break-word !important;">1GSbhaUp8JSRepqQceHzrGhV1bPk9hcPuS</p>
+	<a class="waves-effect btn-flat modal-close">Close</a>
+</div>
+
+<div id="colormodal" class="modal">
+	<div id="colorpicker" align="center"></div><br />
+	<a class="waves-effect btn-flat modal-close">Select</a>
+</div>
+
+<div id="privacymodal" class="modal">
+	<div style="height:250px; margin-top:10px; overflow:auto;">
+		<b>Nimbus Privacy Policy</b>
+		<p>Weather data is retrieved from Yahoo Weather, which is subject to the <a href="https://info.yahoo.com/privacy/us/yahoo/weather/details.html" target="_blank">Yahoo Weather Privacy Policy</a>. Note that the only data sent online is your ZIP Code, which is used to retrieve weather data. The weather radar is retrieved from Freese-Notis Weather, which is subject to their <a href="http://www.weather.net/privacy/" target="_blank">Privacy Policy</a>.</p>
+		<p>Nimbus uses Google Analytics by default, which is a web analysis service provided by Google. This is used by the developer(s) of Nimbus to determine how users interact with Nimbus, and help develop the app to better suit it's users. Google utilizes the data collected to track and examine the use of Nimbus, to prepare reports on its activities and share them with other Google services. Google may use the data collected to contextualize and personalize the ads of its own advertising network. The use of Google Analytics is subject to Google's Privacy Policy, which can be found <a href="http://www.google.com/intl/en/policies/privacy/" target="_blank">here</a>. However, all Google Analytics services can be completely disabled by the user in the Nimbus app settings. Furthermore, none of your app settings (ZIP code, unit of measurement, theme, etc) are sent through Analytics.</p>
+		<p>Nibmus includes functionality to share the current weather forecast for the specified location through Twitter and Tumblr. By sharing this information through Twitter and Tumblr, you are subject to the privacy policies of <a href="https://twitter.com/privacy" target="_blank">Twitter</a> and/or <a href="https://www.tumblr.com/policy/en/privacy" target="_blank">Tumblr</a>. The current temperature, current weather conditions, and the currently specified location are passed to those services only when one of the share buttons is selected.</p>
+	</div>
+	<a class="waves-effect btn-flat modal-close">Close</a>
+</div>
+
+<div id="tabs">
+	<ul class="tabs">
+		<li class="tab col s3"><a href="#forecast" class="theme">Forecast</a></li>
+		<li class="tab col s3"><a href="#current" class="active theme">Current</a></li>
+		<li class="tab col s3"><a href="#map" class="theme">Map</a></li>
+	</ul>
+</div>
+
+<div id="settings">
+	<ul class="settings">
+		<li class="settings-item title"><b>Basics</b></li>
+		<li class="settings-item"><div>Location<a href="#!" class="secondary-content"><input id="location" type="text" placeholder="ZIP Code"></a></div></li>
+		<li class="settings-item"><div>Units<a href="#!" class="secondary-content"><select id="unit" class="browser-default"><option value="f">Imperial</option><option value="c">Metric</option></select></a></div></li>
+		<li class="settings-item expand"><div>Radar quality<a href="#!" class="secondary-content"><select id="radar" class="browser-default"><option value="1">100%</option><option value="0.75">75%</option><option value="0.50">50%</option><option value="0.25">25%</option></select></a></div></li>
+		<li class="settings-item desc">If you want to reduce data usage (or decrease loading times), you can reduce the quality of the radar image.</li>
+		<li class="settings-item title"><b>Theme</b></li>
+		<li class="settings-item expand"><div>Main color<a href="#!" class="secondary-content"><input id="color" name="color" type="text" placeholder="Hex color"></a></div></li>
+		<li class="settings-item desc">This changes the main interface color of Nimbus. Any six-digit hex color is accepted.</li>
+		<li class="settings-item color-trigger"><div>Select color</div></li>
+		<li class="settings-item color-reset">Reset color to default</li>
+		<li class="settings-item expand"><div>Image<a href="#!" class="secondary-content"><input type="text" id="bg" name="bg" placeholder="URL to image" /></a></div></li>
+		<li class="settings-item desc">You can optionally set a custom background image for Nimbus. Enter any URL to an image, or leave it empty to disable.</li>
+		<li class="settings-item title"><b>Privacy</b></li>
+		<li class="settings-item"><div>Analytics<a href="#!" class="secondary-content"><div class="switch"><label>Off<input type="checkbox" id="analytics"><span class="lever"></span>On</label></div></a></div></li>
+		<li class="settings-item privacy">Privacy Policy</li>
+		<li class="settings-item title"><b>About Nimbus 1.0</b></li>
+		<li class="settings-item">Nimbus is developed by Corbin Davenport and licensed under the GPLv3 license. It includes code from <a href="http://jquery.com/" class="title" target="_blank">jQuery</a>, <a href="http://materializecss.com/" class="title" target="_blank">Materialize</a>, <a href="http://simpleweatherjs.com/" class="title" target="_blank">SimpleWeather</a>, and <a href="http://acko.net/blog/farbtastic-jquery-color-picker-plug-in/" class="title" target="_blank">Farbastic.</a></li>
+		<li class="settings-item twitterlink">Nimbus on Twitter<a class="secondary-content"><i class="mdi-content-send"></i></a></li>
+		<li class="settings-item googlelink">Nimbus on Google+<a class="secondary-content"><i class="mdi-content-send"></i></a></li>
+		<li class="settings-item githublink">Nimbus on GitHub<a class="secondary-content"><i class="mdi-content-send"></i></a></li>
+		<li class="settings-item title"><b>Donate</b></li>
+		<li class="settings-item">If you find Nimbus useful, please donate to support continued development. It would mean a lot!</li>
+		<li class="settings-item paypal">Donate via PayPal</li>
+		<li class="settings-item bitcoin">Donate via Bitcoin</li>
+	</ul>
+</div>
+
+<div id="forecast" class="content"></div>
+
+<div id="current" class="content"></div>
+
+<div id="map" class="content"></div>
+
+<a class="btn-floating btn-large waves-effect waves-light modal-trigger theme" id="settings-trigger" href="#"><i class="mdi-action-settings"></i></a>
+
+<a class="btn-floating btn-large waves-effect waves-light modal-trigger theme" id="save-trigger" href="#"><i class="mdi-content-save"></i></a>
+
+<div class="preloader-wrapper big active">
+	<div class="spinner-layer spinner-blue">
+	<div class="circle-clipper left">
+	<div class="circle"></div>
+	</div><div class="gap-patch">
+	<div class="circle"></div>
+	</div><div class="circle-clipper right">
+	<div class="circle"></div>
+	</div>
+	</div>
+
+	<div class="spinner-layer spinner-red">
+	<div class="circle-clipper left">
+	<div class="circle"></div>
+	</div><div class="gap-patch">
+	<div class="circle"></div>
+	</div><div class="circle-clipper right">
+	<div class="circle"></div>
+	</div>
+	</div>
+
+	<div class="spinner-layer spinner-yellow">
+	<div class="circle-clipper left">
+	<div class="circle"></div>
+	</div><div class="gap-patch">
+	<div class="circle"></div>
+	</div><div class="circle-clipper right">
+	<div class="circle"></div>
+	</div>
+	</div>
+
+	<div class="spinner-layer spinner-green">
+	<div class="circle-clipper left">
+	<div class="circle"></div>
+	</div><div class="gap-patch">
+	<div class="circle"></div>
+	</div><div class="circle-clipper right">
+	<div class="circle"></div>
+	</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="js/nimbus.js"></script>
+
+</body>
+</html>
