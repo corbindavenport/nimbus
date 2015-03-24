@@ -6,29 +6,36 @@ $(document).ready(function(){
 	$('#current').hide();
 	$('#settings-trigger').hide();
 	$('#save-trigger').hide();
+	$('#share-trigger').hide();
 
-	if (document.addEventListener && window.localStorage) {
-    	console.log("Compatible web browser detected.");
-	} else {
-		$('#warning').openModal();
-	}
-	
 	if (localStorage.getItem("weather") === null) {
 		localStorage['weather'] = '10001';
 		$('#welcome').openModal();
+	} else if (localStorage.getItem("nimbus") != "1.1") {
+		localStorage['nimbus'] = '1.1';
+		$('#new').openModal();
 	}
+
+	if (localStorage.getItem("international") === null) {
+		localStorage['international'] = 'false';
+	}
+
 	if (localStorage.getItem("unit") === null) {
 		localStorage['unit'] = 'f';
 	}
+
 	if (localStorage.getItem("radar") === null) {
 		localStorage['radar'] = '1';
 	}
+
 	if (localStorage.getItem("color") === null) {
 		localStorage['color'] = '#13A38D';
 	}
+
 	if (localStorage.getItem("bg") === null) {
 		localStorage['bg'] = '';
 	}
+
 	if (localStorage.getItem("analytics") === null || localStorage.getItem("analytics") === "yes") {
 		localStorage['analytics'] = 'true';
 	}
@@ -36,6 +43,7 @@ $(document).ready(function(){
 	// Read values of settings from localStorage
 
 	$("#location").val(localStorage['weather']);
+	$("#international").prop('checked', JSON.parse(localStorage['international']));
 	$("#unit").val(localStorage['unit']);
 	$("#radar").val(localStorage['radar']);
 	$("#color").val(localStorage['color']);
@@ -73,6 +81,7 @@ $(document).ready(function(){
 
 	$("#settings-trigger").css("background", localStorage['color'], 'important');
 	$("#save-trigger").css("background", localStorage['color'], 'important');
+	$("#share-trigger").css("background", localStorage['color'], 'important');
 
 	// Set buttons color
 
@@ -130,23 +139,67 @@ $(document).ready(function(){
 		$('#privacymodal').openModal();
 	});
 
+	// International switch
+
+	if (localStorage['international'] === "on") {
+		$('#location').attr("placeholder", "City, Country");
+	} else {
+		$('#location').attr("placeholder", "US ZIP Code");
+	}
+
+	$('#international').change(function() {
+		if ($('#international').is(':checked')) {
+			$('#location').attr("placeholder", "City, Country");
+		} else {
+			$('#location').attr("placeholder", "US ZIP Code");
+		}
+	});
+
 	// Actions on save button click/tap
 
 	$('#save-trigger').click(function() {
-		if ($("#location").val().length == '5') {
-			localStorage['weather'] = $("#location").val();
-			localStorage['unit'] = $("#unit").val();
-			localStorage['radar'] = $("#radar").val();
-			localStorage['color'] = $("#color").val();
-			localStorage['bg'] = $("#bg").val();
-			if ($('#analytics').is(':checked')) {
-				localStorage['analytics'] = "true";
+		if ($('#international').is(':checked')) {
+			if ($("#location").val().length > '0') {
+				localStorage['weather'] = $("#location").val();
+				if ($('#international').is(':checked')) {
+					localStorage['international'] = "true";
+				} else {
+					localStorage['international'] = "false";
+				}
+				localStorage['unit'] = $("#unit").val();
+				localStorage['radar'] = $("#radar").val();
+				localStorage['color'] = $("#color").val();
+				localStorage['bg'] = $("#bg").val();
+				if ($('#analytics').is(':checked')) {
+					localStorage['analytics'] = "true";
+				} else {
+					localStorage['analytics'] = "false";
+				}
+				window.location.replace('index.html');
 			} else {
-				localStorage['analytics'] = "false";
+				toast('Enter a valid location!', 3000, 'rounded');
 			}
-			window.location.replace('index.html');
 		} else {
-			toast('Enter a valid ZIP code.', 3000, 'rounded');
+			if ($("#location").val().length == '5' && $("#location").val().match(/^\d+$/)) {
+				localStorage['weather'] = $("#location").val();
+				if ($('#international').is(':checked')) {
+					localStorage['international'] = "true";
+				} else {
+					localStorage['international'] = "false";
+				}
+				localStorage['unit'] = $("#unit").val();
+				localStorage['radar'] = $("#radar").val();
+				localStorage['color'] = $("#color").val();
+				localStorage['bg'] = $("#bg").val();
+				if ($('#analytics').is(':checked')) {
+					localStorage['analytics'] = "true";
+				} else {
+					localStorage['analytics'] = "false";
+				}
+				window.location.replace('index.html');
+			} else {
+				toast('Enter a valid US ZIP code!', 3000, 'rounded');
+			}
 		}
 	});
 	
@@ -155,12 +208,13 @@ $(document).ready(function(){
 // Weather
 
 $(document).ready(function() {
+
 	$.simpleWeather({
 	location: localStorage['weather'],
 	woeid: '',
 	unit: localStorage['unit'],
 	success: function(weather) {
-		now = '<div class="card"><div class="card-content"><span class="card-title">' + weather.city + ', ' + weather.region + '</span><table><tr><th class="weather-icon"><img src="img/' + weather.code + '.png" /></th><th class="weather-info"><h3>' + weather.temp + '&deg;' + weather.units.temp + '</h3><p>' + weather.high + '&deg;' + weather.units.temp + ' / ' + weather.low + '&deg;' + weather.units.temp + '</p></th></tr></table></div></div><div class="card"><div class="card-content"><span class="card-title">Winds</span><p><b>Wind chill:</b> ' + weather.wind.chill + '&deg;' + weather.units.temp + '<p><b>Speed:</b> ' + weather.wind.speed + ' ' + weather.units.speed + ' ' + weather.wind.direction + '</div></div><div class="card"><div class="card-content"><span class="card-title">Daylight</span><p><b>Sunrise:</b> ' + weather.sunrise + '</p><p><b>Sunset:</b> ' + weather.sunset + '</p><p><b>Visibility:</b> ' + weather.visibility + ' ' + weather.units.distance + '</p></div></div><div class="card"><div class="card-content"><p><button type="submit" name="action" class="btn-flat" id="share-twitter">Share on Twitter<i class="mdi-content-send right"></i></button><button type="submit" name="action" class="btn-flat" id="share-tumblr">Share on Tumblr<i class="mdi-content-send right"></i></button></p></div></div><div class="card"><div class="card-content">Weather info last updated ' + weather.updated + ' from Yahoo Weather.</div></div>';
+		now = '<div class="card"><div class="card-content"><span class="card-title">' + weather.city + ', ' + weather.region + '</span><table><tr><th class="weather-icon"><img src="img/' + weather.code + '.png" /></th><th class="weather-info"><h3>' + weather.temp + '&deg;' + weather.units.temp + '</h3><p>' + weather.high + '&deg;' + weather.units.temp + ' / ' + weather.low + '&deg;' + weather.units.temp + '</p></th></tr></table></div></div><div class="card"><div class="card-content"><span class="card-title">Winds</span><p><b>Wind chill:</b> ' + weather.wind.chill + '&deg;' + weather.units.temp + '<p><b>Speed:</b> ' + weather.wind.speed + ' ' + weather.units.speed + ' ' + weather.wind.direction + '</div></div><div class="card"><div class="card-content"><span class="card-title">Daylight</span><p><b>Sunrise:</b> ' + weather.sunrise + '</p><p><b>Sunset:</b> ' + weather.sunset + '</p><p><b>Visibility:</b> ' + weather.visibility + ' ' + weather.units.distance + '</p></div></div><div class="card"><div class="card-content"><div class="row"><button type="submit" name="action" class="btn-flat col s12 m6" id="share-twitter">Share on Twitter<i class="mdi-content-send right"></i></button><button type="submit" name="action" class="btn-flat col s12 m6" id="share-tumblr">Share on Tumblr<i class="mdi-content-send right"></i></button></div></div></div><div class="card"><div class="card-content">Weather info last updated ' + weather.updated + ' from Yahoo Weather.</div></div>';
 		$("#current").append(now);
 
 		forecast = '<div id="forecast-container"><div class="card forecast1"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[0].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[0].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[0].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[0].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[0].text + '</p></th></tr></table></div></div><div class="card forecast2"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[1].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[1].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[1].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[1].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[1].text + '</p></th></tr></table></div></div><div class="card forecast3"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[2].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[2].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[2].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[2].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[2].text + '</p></th></tr></table></div></div><div class="card forecast4"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[3].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[3].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[3].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[3].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[3].text + '</p></th></tr></table></div></div><div class="card forecast5"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[4].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[4].code + '.png" /><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[4].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[4].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[4].text + '</p></th></tr></table></div></div></div>';
@@ -183,14 +237,70 @@ $(document).ready(function() {
 		$("#current").append('<div class="card"><div class="card-content"><span class="card-title">Error</span><p>There was an error loading the weather.</p></div></div>');
 	}
 	});
+
 });
 
 // Map
 
 $(window).load(function() {
-	var width = ($("#map").width() * localStorage["radar"]);
-	var radarmap = "url(http://www.tephigram.weather.net/cgi-bin/razradar.cgi?zipcode=" + localStorage["weather"] + "&width=" + width + "&height=" + $("#map").height() + ") #000000 center no-repeat"
-	$("#map").css("background", radarmap);
+
+	if (localStorage.getItem("international") === "false") {
+
+		var loaded = "false";
+
+		var width = ($("#map").width() * localStorage["radar"]);
+		var height = ($("#map").height() * localStorage["radar"]);
+		var radarmap = "http://www.tephigram.weather.net/cgi-bin/razradar.cgi?zipcode=" + localStorage["weather"];
+		$("#map").css("background", "url(" + radarmap + "&width=" + width + "&height=" + height + ") #000000 bottom center no-repeat");
+
+		$('.forecast-trigger').click(function() {
+			$('#share-trigger').hide();
+			$('#settings-trigger').show();
+		});
+
+		$('.current-trigger').click(function() {
+			$('#share-trigger').hide();
+			$('#settings-trigger').show();
+		});
+
+		$('.map-trigger').click(function() {
+			$('#settings-trigger').hide();
+			$('#share-trigger').show();
+		});
+
+		$('#share-trigger').click(function() {
+			$('#share').openModal();
+			if (loaded === "false") {
+				$.ajax({ 
+					url: 'https://api.imgur.com/3/image',
+					headers: {
+						'Authorization': 'Client-ID bb3c3cd294bba78'
+					},
+					type: 'POST',
+					data: {
+						'image': radarmap + '&width=480&height=360'
+					},
+					dataType: 'json',
+					success: function(response) {
+						if(response.success) {
+							$('.share-content').html('<p>This is a direct image link to the current radar map.</p><div class="row"><div class="input-field col s12"><i class="mdi-content-link prefix"></i><input id="share-url" type="text" value="' + response.data.link + '"></div></div>');
+							$('.share-footer').append('<a href="' + response.data.link + '" target="_blank" class="waves-effect btn-flat">Open Image</a>');
+							$("#share-url").select();
+							loaded = "true";
+						}
+					},
+					error: function(response) {
+						$('.share-content').html('<p><b>Imgur error:</b></p><p>' + response + '</p>');
+					}
+				});
+			}
+			$("#share-url").select();
+		});
+
+	} else {
+		$('#map').html('<div class="card"><div class="card-content"><span class="card-title">Map unavailable</span><p>Due to an API limitation, radar maps are not available for locations outside the United States. This is being worked on, and may be available in a future update.</p></div></div>');
+	}
+
 });
 
 // Display everything
