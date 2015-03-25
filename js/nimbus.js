@@ -289,8 +289,8 @@ $(window).load(function() {
 							loaded = "true";
 						}
 					},
-					error: function(response) {
-						$('.share-content').html('<p><b>Imgur error:</b></p><p>' + response + '</p>');
+					error: function(xhr, status, error) {
+						$('.share-content').html('<p><b>Imgur error:</b></p><p>' + xhr.responseText + '</p>');
 					}
 				});
 			}
