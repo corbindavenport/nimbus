@@ -284,6 +284,8 @@ input[type=text], input[type=password], input[type=email], input[type=url], inpu
 	line-height: 21px;
 	float: right;
 	background: #EEEEEE;
+	visibility: visible;
+	-webkit-appearance: menulist-text;
 }
 
 #settings .expand {
