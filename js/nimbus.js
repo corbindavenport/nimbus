@@ -155,6 +155,13 @@ $(document).ready(function(){
 		}
 	});
 
+	// Better selection
+
+	$('.settings-item').click(function() {
+		$(".settings-item > select").select();
+		$(".settings-item > input").select();
+	});
+
 	// Actions on save button click/tap
 
 	$('#save-trigger').click(function() {
