@@ -278,16 +278,6 @@ input[type=text], input[type=password], input[type=email], input[type=url], inpu
 	border-bottom: 0px;
 }
 
-.settings-item select {
-	height: 21px;
-	padding: 0px;
-	line-height: 21px;
-	float: right;
-	background: #EEEEEE;
-	visibility: visible;
-	-webkit-appearance: menulist-text;
-}
-
 #settings .expand {
 	border-bottom: none !important;
 	padding-bottom: 10px;

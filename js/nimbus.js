@@ -7,25 +7,30 @@ $(document).ready(function(){
 	$('#settings-trigger').hide();
 	$('#save-trigger').hide();
 	$('#share-trigger').hide();
+	$('select').material_select();
 
 	if (localStorage.getItem("weather") === null) {
 		localStorage['weather'] = '10001';
 		$('#welcome').openModal();
-	} else if (localStorage.getItem("nimbus") != "1.1") {
-		localStorage['nimbus'] = '1.1';
+	} else if (localStorage.getItem("nimbus") != "1.2") {
+		//localStorage['nimbus'] = '1.1';
 		$('#new').openModal();
 	}
-
-	if (localStorage.getItem("international") === null) {
-		localStorage['international'] = 'false';
-	}
-
+	
 	if (localStorage.getItem("unit") === null) {
 		localStorage['unit'] = 'f';
 	}
 
-	if (localStorage.getItem("radar") === null) {
-		localStorage['radar'] = '1';
+	if (localStorage.getItem("radar-quality") === null) {
+	  if (localStorage.getItem("radar") === null) {
+	    localStorage['radar-quality'] = '1';
+	  } else {
+	    localStorage['radar-quality'] = localStorage['radar'];
+	  }
+	}
+	
+	if (localStorage.getItem("radar-location") === null) {
+		localStorage['radar-location'] = '';
 	}
 
 	if (localStorage.getItem("color") === null) {
@@ -43,9 +48,9 @@ $(document).ready(function(){
 	// Read values of settings from localStorage
 
 	$("#location").val(localStorage['weather']);
-	$("#international").prop('checked', JSON.parse(localStorage['international']));
 	$("#unit").val(localStorage['unit']);
-	$("#radar").val(localStorage['radar']);
+	$("#radar-location").val(localStorage['radar-location']);
+	$("#radar-quality").val(localStorage['radar-quality']);
 	$("#color").val(localStorage['color']);
 	$("#bg").val(localStorage['bg']);
 	$("#analytics").prop('checked', JSON.parse(localStorage['analytics']));
@@ -96,17 +101,6 @@ $(document).ready(function(){
 		$('#save-trigger').fadeIn( "slow", function() {});
 	});
 
-	// Color picker 
-
-	$('.color-trigger').click(function() {
-		$('#colormodal').openModal();
-	});
-
-	$('.color-reset').click(function() {
-		document.getElementById("color").value = "#13A38D";
-		toast('Color reset!', 3000, 'rounded');
-	});
-
 	// Social Media links
 
 	$('.twitterlink').click(function() {
@@ -121,92 +115,65 @@ $(document).ready(function(){
 		window.open("https://github.com/corbindavenport/nimbus", "_blank");
 	});
 
-	// PayPal Donate
+	// Settings
 
-	$('.paypal').click(function() {
-		$('#paypalmodal').openModal();
+	$('.location-item').click(function() {
+		$('#location-modal').openModal();
+		$("#location").select();
 	});
-
-	// Bitcoin Donate
-
-	$('.bitcoin').click(function() {
-		$('#bitcoinmodal').openModal();
+	$('.units-item').click(function() {
+		$('#units-modal').openModal();
 	});
-
-	// Privacy Policy
-
+	$('.radar-location-item').click(function() {
+		$('#radar-location-modal').openModal();
+		$("#radar-location").select();
+	});
+	$('.radar-quality-item').click(function() {
+		$('#radar-quality-modal').openModal();
+	});
+	$('.hex-item').click(function() {
+		$('#hex-modal').openModal();
+		$("#color").select();
+	});
+	$('.picker-item').click(function() {
+		$('#picker-modal').openModal();
+	});
+	$('.color-reset').click(function() {
+		document.getElementById("color").value = "#13A38D";
+		toast('Color reset!', 3000, 'rounded');
+	});
+	$('.background-item').click(function() {
+		$('#background-modal').openModal();
+		$("#bg").select();
+	});
 	$('.privacy').click(function() {
 		$('#privacymodal').openModal();
 	});
-
-	// International switch
-
-	if (localStorage['international'] === "on") {
-		$('#location').attr("placeholder", "City, Country");
-	} else {
-		$('#location').attr("placeholder", "US ZIP Code");
-	}
-
-	$('#international').change(function() {
-		if ($('#international').is(':checked')) {
-			$('#location').attr("placeholder", "City, Country");
-		} else {
-			$('#location').attr("placeholder", "US ZIP Code");
-		}
+  $('.paypal').click(function() {
+		$('#paypalmodal').openModal();
 	});
-
-	// Better selection
-
-	$('.settings-item').click(function() {
-		$(".settings-item > select").select();
-		$(".settings-item > input").select();
+	$('.bitcoin').click(function() {
+		$('#bitcoinmodal').openModal();
 	});
 
 	// Actions on save button click/tap
 
 	$('#save-trigger').click(function() {
-		if ($('#international').is(':checked')) {
-			if ($("#location").val().length > '0') {
-				localStorage['weather'] = $("#location").val();
-				if ($('#international').is(':checked')) {
-					localStorage['international'] = "true";
-				} else {
-					localStorage['international'] = "false";
-				}
-				localStorage['unit'] = $("#unit").val();
-				localStorage['radar'] = $("#radar").val();
-				localStorage['color'] = $("#color").val();
-				localStorage['bg'] = $("#bg").val();
-				if ($('#analytics').is(':checked')) {
-					localStorage['analytics'] = "true";
-				} else {
-					localStorage['analytics'] = "false";
-				}
-				window.location.replace('index.html');
+		if (($("#location").val().length > '0') && (($("#radar-location").val().match(/^\d+$/) != null)) || ($("#radar-location").val() === "")) {
+			localStorage['weather'] = $("#location").val();
+			localStorage['unit'] = $("#unit").val();
+			localStorage['radar-location'] = $("#radar-location").val();
+			localStorage['radar-quality'] = $("#radar-quality").val();
+			localStorage['color'] = $("#color").val();
+			localStorage['bg'] = $("#bg").val();
+			if ($('#analytics').is(':checked')) {
+				localStorage['analytics'] = "true";
 			} else {
-				toast('Enter a valid location!', 3000, 'rounded');
+				localStorage['analytics'] = "false";
 			}
+			window.location.replace('index.html');
 		} else {
-			if ($("#location").val().length == '5' && $("#location").val().match(/^\d+$/)) {
-				localStorage['weather'] = $("#location").val();
-				if ($('#international').is(':checked')) {
-					localStorage['international'] = "true";
-				} else {
-					localStorage['international'] = "false";
-				}
-				localStorage['unit'] = $("#unit").val();
-				localStorage['radar'] = $("#radar").val();
-				localStorage['color'] = $("#color").val();
-				localStorage['bg'] = $("#bg").val();
-				if ($('#analytics').is(':checked')) {
-					localStorage['analytics'] = "true";
-				} else {
-					localStorage['analytics'] = "false";
-				}
-				window.location.replace('index.html');
-			} else {
-				toast('Enter a valid US ZIP code!', 3000, 'rounded');
-			}
+			toast('Enter a valid location!', 3000, 'rounded');
 		}
 	});
 	
@@ -227,7 +194,7 @@ $(document).ready(function() {
 		forecast = '<div id="forecast-container"><div class="card forecast1"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[0].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[0].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[0].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[0].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[0].text + '</p></th></tr></table></div></div><div class="card forecast2"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[1].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[1].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[1].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[1].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[1].text + '</p></th></tr></table></div></div><div class="card forecast3"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[2].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[2].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[2].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[2].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[2].text + '</p></th></tr></table></div></div><div class="card forecast4"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[3].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[3].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[3].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[3].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[3].text + '</p></th></tr></table></div></div><div class="card forecast5"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[4].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[4].code + '.png" /><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[4].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[4].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[4].text + '</p></th></tr></table></div></div></div>';
 		$("#forecast").append(forecast);
 		
-		var state = weather.region;
+		localStorage['region'] = weather.region;
 		
 		var socialmessage = "It's currently " + weather.temp + "°" + weather.units.temp + " and " + weather.currently + " in " + weather.city + " right now!";
 		
@@ -251,58 +218,61 @@ $(document).ready(function() {
 
 $(window).load(function() {
 
-	if (localStorage.getItem("international") === "false") {
-
-		var loaded = "false";
-
-		var width = ($("#map").width() * localStorage["radar"]);
-		var height = ($("#map").height() * localStorage["radar"]);
-		var radarmap = "http://www.tephigram.weather.net/cgi-bin/razradar.cgi?zipcode=" + localStorage["weather"];
-		$("#map").css("background", "url(" + radarmap + "&width=" + width + "&height=" + height + ") #000000 bottom center no-repeat");
-
-		$('.forecast-trigger').click(function() {
-			$('#share-trigger').hide();
-			$('#settings-trigger').show();
-		});
-
-		$('.current-trigger').click(function() {
-			$('#share-trigger').hide();
-			$('#settings-trigger').show();
-		});
-
-		$('.map-trigger').click(function() {
-			$('#settings-trigger').hide();
-			$('#share-trigger').show();
-		});
-
-		$('#share-trigger').click(function() {
-			$('#share').openModal();
-			if (loaded === "false") {
-				$.ajax({ 
-					url: 'https://api.imgur.com/3/image',
-					headers: {
-						'Authorization': 'Client-ID bb3c3cd294bba78'
-					},
-					type: 'POST',
-					data: {
-						'image': radarmap + '&width=480&height=360'
-					},
-					dataType: 'json',
-					success: function(response) {
-						if(response.success) {
-							$('.share-content').html('<p>This is a direct image link to the current radar map.</p><div class="row"><div class="input-field col s12"><i class="mdi-content-link prefix"></i><input id="share-url" type="text" value="' + response.data.link + '"></div></div>');
-							$('.share-footer').append('<a href="' + response.data.link + '" target="_blank" class="waves-effect btn-flat">Open Image</a>');
-							$("#share-url").select();
-							loaded = "true";
-						}
-					},
-					error: function(xhr, status, error) {
-						$('.share-content').html('<p><b>Imgur error:</b></p><p>' + xhr.responseText + '</p>');
-					}
-				});
-			}
-			$("#share-url").select();
-		});
+	if ( (localStorage.getItem("region") === "DC") || (localStorage.getItem("region") === "AL") || (localStorage.getItem("region") === "AK") || (localStorage.getItem("region") === "AZ") || (localStorage.getItem("region") === "AR") || (localStorage.getItem("region") === "CA") || (localStorage.getItem("region") === "CO") || (localStorage.getItem("region") === "CT") || (localStorage.getItem("region") === "DE") || (localStorage.getItem("region") === "FL") || (localStorage.getItem("region") === "GA") || (localStorage.getItem("region") === "HI") || (localStorage.getItem("region") === "ID") || (localStorage.getItem("region") === "IL") || (localStorage.getItem("region") === "IN") || (localStorage.getItem("region") === "IA") || (localStorage.getItem("region") === "KS") || (localStorage.getItem("region") === "KY") || (localStorage.getItem("region") === "LA") || (localStorage.getItem("region") === "ME") || (localStorage.getItem("region") === "MD") || (localStorage.getItem("region") === "MA") || (localStorage.getItem("region") === "MI") || (localStorage.getItem("region") === "MN") || (localStorage.getItem("region") === "MS") || (localStorage.getItem("region") === "MO") || (localStorage.getItem("region") === "MT") || (localStorage.getItem("region") === "NE") || (localStorage.getItem("region") === "NV") || (localStorage.getItem("region") === "NH") || (localStorage.getItem("region") === "NJ") || (localStorage.getItem("region") === "NM") || (localStorage.getItem("region") === "NY") || (localStorage.getItem("region") === "NC") || (localStorage.getItem("region") === "ND") || (localStorage.getItem("region") === "OH") || (localStorage.getItem("region") === "OK") ||  (localStorage.getItem("region") === "OR") || (localStorage.getItem("region") === "PA") || (localStorage.getItem("region") === "RI") || (localStorage.getItem("region") === "SC") || (localStorage.getItem("region") === "SD") || (localStorage.getItem("region") === "TN") || (localStorage.getItem("region") === "TX") || (localStorage.getItem("region") === "UT") || (localStorage.getItem("region") === "VT") || (localStorage.getItem("region") === "VA") || (localStorage.getItem("region") === "WA") || (localStorage.getItem("region") === "WV") || (localStorage.getItem("region") === "WI") || (localStorage.getItem("region") === "WY") ) {
+		if (localStorage.getItem("radar-location") != "") {
+  		var loaded = "false";
+  
+  		var width = ($("#map").width() * localStorage["radar-quality"]);
+  		var height = ($("#map").height() * localStorage["radar-quality"]);
+  		var radarmap = "http://www.tephigram.weather.net/cgi-bin/razradar.cgi?zipcode=" + localStorage["radar-location"];
+  		$("#map").css("background", "url(" + radarmap + "&width=" + width + "&height=" + height + ") #000000 bottom center no-repeat");
+  
+  		$('.forecast-trigger').click(function() {
+  			$('#share-trigger').hide();
+  			$('#settings-trigger').show();
+  		});
+  
+  		$('.current-trigger').click(function() {
+  			$('#share-trigger').hide();
+  			$('#settings-trigger').show();
+  		});
+  
+  		$('.map-trigger').click(function() {
+  			$('#settings-trigger').hide();
+  			$('#share-trigger').show();
+  		});
+  
+  		$('#share-trigger').click(function() {
+  			$('#share').openModal();
+  			if (loaded === "false") {
+  				$.ajax({ 
+  					url: 'https://api.imgur.com/3/image',
+  					headers: {
+  						'Authorization': 'Client-ID bb3c3cd294bba78'
+  					},
+  					type: 'POST',
+  					data: {
+  						'image': radarmap + '&width=480&height=360'
+  					},
+  					dataType: 'json',
+  					success: function(response) {
+  						if(response.success) {
+  							$('.share-content').html('<p>This is a direct image link to the current radar map.</p><div class="row"><div class="input-field col s12"><i class="mdi-content-link prefix"></i><input id="share-url" type="text" value="' + response.data.link + '"></div></div>');
+  							$('.share-footer').append('<a href="' + response.data.link + '" target="_blank" class="waves-effect btn-flat">Open Image</a>');
+  							$("#share-url").select();
+  							loaded = "true";
+  						}
+  					},
+  					error: function(xhr, status, error) {
+  						$('.share-content').html('<p><b>Imgur error:</b></p><p>' + xhr.responseText + '</p>');
+  					}
+  				});
+  			}
+  			$("#share-url").select();
+  		});
+  	} else {
+  	  $('#map').html('<div class="card"><div class="card-content"><span class="card-title">Map not configured</span><p>Due to an API limitation, you need to configure the location for the radar map seperately. Go to the settings and set a radar location.</p></div></div>');
+  	}
 
 	} else {
 		$('#map').html('<div class="card"><div class="card-content"><span class="card-title">Map unavailable</span><p>Due to an API limitation, radar maps are not available for locations outside the United States. This is being worked on, and may be available in a future update.</p></div></div>');

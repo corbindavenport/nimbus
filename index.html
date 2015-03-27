@@ -54,12 +54,80 @@
 	</div>
 </div>
 
+<div id="location-modal" class="modal">
+	<div class="modal-content">
+	  <b>You can enter any city, ZIP Code, or coordinates.</b>
+		<div class="input-field"><input id="location" placeholder="City, Country" type="text"></div>
+	</div>
+	<div class="modal-footer share-footer">
+		<a class="waves-effect btn-flat modal-close">Close</a>
+	</div>
+</div>
+
+<div id="units-modal" class="modal">
+	<div class="modal-content">
+	  <b>Imperial (American) and Metric units are supported.</b>
+		<p><select id="unit"><option value="f">Imperial</option><option value="c">Metric</option></select></p>
+	</div>
+	<div class="modal-footer share-footer">
+		<a class="waves-effect btn-flat modal-close">Close</a>
+	</div>
+</div>
+
+<div id="radar-location-modal" class="modal">
+	<div class="modal-content">
+	  <b>Only United States ZIP codes are supported.</b>
+		<div class="input-field"><input id="radar-location" placeholder="US ZIP Code" type="text"></div>
+	</div>
+	<div class="modal-footer share-footer">
+		<a class="waves-effect btn-flat modal-close">Close</a>
+	</div>
+</div>
+
+<div id="radar-quality-modal" class="modal">
+	<div class="modal-content">
+	  <b>If you want to reduce data usage (or decrease loading times), you can reduce the quality of the radar image. This will not affect the quality of shared maps.</b>
+		<p></p><select id="radar-quality"><option value="1">100%</option><option value="0.75">75%</option><option value="0.50">50%</option><option value="0.25">25%</option></select></p>
+	</div>
+	<div class="modal-footer share-footer">
+		<a class="waves-effect btn-flat modal-close">Close</a>
+	</div>
+</div>
+
+<div id="hex-modal" class="modal">
+	<div class="modal-content">
+	  <b>This changes the main interface color of Nimbus. Any six-digit hex color is accepted.</b>
+		<div class="input-field"><input id="color" name="color" type="text" placeholder="Hex color"></div>
+	</div>
+	<div class="modal-footer share-footer">
+		<a class="waves-effect btn-flat modal-close">Select</a>
+	</div>
+</div>
+
+<div id="picker-modal" class="modal">
+	<div class="modal-content">
+		<div id="colorpicker" align="center"></div><br />
+	</div>
+	<div class="modal-footer">
+		<a class="waves-effect btn-flat modal-close">Select</a>
+	</div>
+</div>
+
+<div id="background-modal" class="modal">
+	<div class="modal-content">
+	  <b>You can optionally set a background image that appears behind all content.</b>
+		<div class="input-field"><input type="text" id="bg" name="bg" placeholder="URL to image" /></div>
+	</div>
+	<div class="modal-footer share-footer">
+		<a class="waves-effect btn-flat modal-close">Close</a>
+	</div>
+</div>
+
 <div id="new" class="modal modal-fixed-footer">
 	<div class="modal-content">
 		<h4>What's new</h4>
-		<p>Nimbus 1.1 includes new features and improvements to make it better than ever. Here's some of the improvements in this update.</p>
-		<p><u>International Support</u>: Nimbus now officially supports locations outside the United States!</p>
-		<p><u>Share map</u>: You can now share the current radar map for your location with the new Share button. This will upload the current map as an animated GIF image to <a href="http://imgur.com/" target="_blank">imgur.com</a>, ready to share online!</p>
+		<p>Nimbus 1.2 includes new features and improvements to make it better than ever. Here's some of the improvements in this update.</p>
+		<p><u>Enhanced Settings</u>: The settings panel in Nimbus has been updated for better usability, and with even more customization!</p>
 		<p><i>And lots of bug fixes and UI improvements!</i></p>
 	</div>
 	<div class="modal-footer">
@@ -98,15 +166,6 @@
 	</div>
 </div>
 
-<div id="colormodal" class="modal">
-	<div class="modal-content">
-		<div id="colorpicker" align="center"></div><br />
-	</div>
-	<div class="modal-footer">
-		<a class="waves-effect btn-flat modal-close">Select</a>
-	</div>
-</div>
-
 <div id="privacymodal" class="modal modal-fixed-footer">
 	<div class="modal-content">
 		<b>Nimbus Privacy Policy</b>
@@ -129,24 +188,21 @@
 
 <div id="settings">
 	<ul class="settings">
-		<li class="settings-item title"><b>Basics</b></li>
-		<li class="settings-item"><div>Location<a href="#!" class="secondary-content"><input id="location" type="text"></a></div></li>
-		<li class="settings-item expand"><div>International Mode<a href="#!" class="secondary-content"><div class="switch"><label>Off<input type="checkbox" id="international"><span class="lever"></span>On</label></div></a></div></li>
-		<li class="settings-item desc">Turn this on to use locations outside the United States.</li>
-		<li class="settings-item"><div>Units<a href="#!" class="secondary-content"><select id="unit" class="browser-default"><option value="f">Imperial</option><option value="c">Metric</option></select></a></div></li>
-		<li class="settings-item expand"><div>Radar quality<a href="#!" class="secondary-content"><select id="radar" class="browser-default"><option value="1">100%</option><option value="0.75">75%</option><option value="0.50">50%</option><option value="0.25">25%</option></select></a></div></li>
-		<li class="settings-item desc">If you want to reduce data usage (or decrease loading times), you can reduce the quality of the radar image.</li>
+		<li class="settings-item title"><b>General</b></li>
+		<li class="settings-item location-item">Location</li>
+		<li class="settings-item units-item">Units</li>
+		<li class="settings-item title"><b>Radar</b></li>
+		<li class="settings-item radar-location-item">Location</li>
+		<li class="settings-item radar-quality-item">Radar quality</li>
 		<li class="settings-item title"><b>Theme</b></li>
-		<li class="settings-item expand"><div>Main color<a href="#!" class="secondary-content"><input id="color" name="color" type="text" placeholder="Hex color"></a></div></li>
-		<li class="settings-item desc">This changes the main interface color of Nimbus. Any six-digit hex color is accepted.</li>
-		<li class="settings-item color-trigger"><div>Select color</div></li>
+		<li class="settings-item hex-item">Pick color from Hex Code</li>
+		<li class="settings-item picker-item">Pick color from Color Picker</li>
 		<li class="settings-item color-reset">Reset color to default</li>
-		<li class="settings-item expand"><div>Image<a href="#!" class="secondary-content"><input type="text" id="bg" name="bg" placeholder="URL to image" /></a></div></li>
-		<li class="settings-item desc">You can optionally set a custom background image for Nimbus. Enter any URL to an image, or leave it empty to disable.</li>
+		<li class="settings-item background-item">Change background image</li>
 		<li class="settings-item title"><b>Privacy</b></li>
 		<li class="settings-item"><div>Analytics<a href="#!" class="secondary-content"><div class="switch"><label>Off<input type="checkbox" id="analytics"><span class="lever"></span>On</label></div></a></div></li>
 		<li class="settings-item privacy">Privacy Policy</li>
-		<li class="settings-item title"><b>About Nimbus 1.0</b></li>
+		<li class="settings-item title"><b>About Nimbus 1.2</b></li>
 		<li class="settings-item">Nimbus is developed by Corbin Davenport and licensed under the GPLv3 license. It includes code from <a href="http://jquery.com/" class="title" target="_blank">jQuery</a>, <a href="http://materializecss.com/" class="title" target="_blank">Materialize</a>, <a href="http://simpleweatherjs.com/" class="title" target="_blank">SimpleWeather</a>, <a href="http://isithackday.com/hacks/geo/yql-geo-library/" class="title" target="_blank">YQL Geo Library</a>, and <a href="http://acko.net/blog/farbtastic-jquery-color-picker-plug-in/" class="title" target="_blank">Farbastic.</a></li>
 		<li class="settings-item twitterlink">Nimbus on Twitter<a class="secondary-content"><i class="mdi-content-send"></i></a></li>
 		<li class="settings-item googlelink">Nimbus on Google+<a class="secondary-content"><i class="mdi-content-send"></i></a></li>
