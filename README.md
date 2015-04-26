@@ -9,10 +9,16 @@ Nimbus is a simple and powerful weather app, available for Chrome, Firefox, Andr
 * Five-day forecast and current conditions
 * Customization of the app's color and optional background image
 * Animated radar image
+* Share current radar image via Imgur
 
 Nimbus is open source under the GPLv3 license. Nimbus is also available on the Chrome Web Store, Google Play Store for Android 4.0+ devices, and the Firefox Marketplace.
 
 ---------------------------------------------------------
+
+__New in Nimbus 1.2:__
+* **Enhanced Settings**: The settings panel in Nimbus has been updated for better usability, and with even more customization!
+* **Better location**: Nimbus 1.2 no longer needs the international switch that 1.1 added, thanks to improved location detection.
+* And lots of bug fixes and UI improvements!
 
 __New in Nimbus 1.1:__
 * **International Support**: Nimbus now officially supports locations outside the United States!
