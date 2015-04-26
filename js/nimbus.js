@@ -7,25 +7,32 @@ $(document).ready(function(){
 	$('#settings-trigger').hide();
 	$('#save-trigger').hide();
 	$('#share-trigger').hide();
+	$('select').material_select();
 
 	if (localStorage.getItem("weather") === null) {
+		// Never opened before
 		localStorage['weather'] = '10001';
+		localStorage['nimbus'] = '1.2';
 		$('#welcome').openModal();
-	} else if (localStorage.getItem("nimbus") != "1.1") {
-		localStorage['nimbus'] = '1.1';
+	} else if (localStorage.getItem("nimbus") != "1.2") {
+		localStorage['nimbus'] = '1.2';
 		$('#new').openModal();
 	}
-
-	if (localStorage.getItem("international") === null) {
-		localStorage['international'] = 'false';
-	}
-
+	
 	if (localStorage.getItem("unit") === null) {
 		localStorage['unit'] = 'f';
 	}
 
-	if (localStorage.getItem("radar") === null) {
-		localStorage['radar'] = '1';
+	if (localStorage.getItem("radar-quality") === null) {
+		if (localStorage.getItem("radar") === null) {
+			localStorage['radar-quality'] = '1';
+		} else {
+			localStorage['radar-quality'] = localStorage['radar'];
+		}
+	}
+	
+	if (localStorage.getItem("radar-location") === null) {
+		localStorage['radar-location'] = '';
 	}
 
 	if (localStorage.getItem("color") === null) {
@@ -43,9 +50,9 @@ $(document).ready(function(){
 	// Read values of settings from localStorage
 
 	$("#location").val(localStorage['weather']);
-	$("#international").prop('checked', JSON.parse(localStorage['international']));
 	$("#unit").val(localStorage['unit']);
-	$("#radar").val(localStorage['radar']);
+	$("#radar-location").val(localStorage['radar-location']);
+	$("#radar-quality").val(localStorage['radar-quality']);
 	$("#color").val(localStorage['color']);
 	$("#bg").val(localStorage['bg']);
 	$("#analytics").prop('checked', JSON.parse(localStorage['analytics']));
@@ -88,23 +95,16 @@ $(document).ready(function(){
 	$(".btn").css("background", localStorage['color'], 'important');
 	$(".btn").css("background", localStorage['color'], 'important');
 
+	// Set spinning wheel color
+
+	$(".spinner-layer").css("border-color", localStorage['color'], 'important');
+
 	// Actions on settings button click/tap
 
 	$('#settings-trigger').click(function() {
 		$('#settings-trigger').fadeOut( "slow", function() {});
 		$('#settings').fadeIn( "slow", function() {});
 		$('#save-trigger').fadeIn( "slow", function() {});
-	});
-
-	// Color picker 
-
-	$('.color-trigger').click(function() {
-		$('#colormodal').openModal();
-	});
-
-	$('.color-reset').click(function() {
-		document.getElementById("color").value = "#13A38D";
-		toast('Color reset!', 3000, 'rounded');
 	});
 
 	// Social Media links
@@ -121,93 +121,84 @@ $(document).ready(function(){
 		window.open("https://github.com/corbindavenport/nimbus", "_blank");
 	});
 
-	// PayPal Donate
+	// Settings
 
-	$('.paypal').click(function() {
-		$('#paypalmodal').openModal();
+	$('.location-item').click(function() {
+		$('#location-modal').openModal();
+		$("#location").select();
 	});
-
-	// Bitcoin Donate
-
-	$('.bitcoin').click(function() {
-		$('#bitcoinmodal').openModal();
+	$('.units-item').click(function() {
+		$('#units-modal').openModal();
 	});
-
-	// Privacy Policy
-
+	$('.reset-item').click(function() {
+		$('#reset-modal').openModal();
+	});
+	$('.reset-confirm').click(function() {
+		localStorage['weather'] = '10001';
+		localStorage['unit'] = 'f';
+		localStorage['radar-quality'] = '1';
+		localStorage['radar-location'] = '';
+		localStorage['color'] = '#13A38D';
+		localStorage['bg'] = '';
+		localStorage['analytics'] = 'true';
+		window.location.replace('index.html');
+	});
+	$('.radar-location-item').click(function() {
+		$('#radar-location-modal').openModal();
+		$("#radar-location").select();
+	});
+	$('.radar-quality-item').click(function() {
+		$('#radar-quality-modal').openModal();
+	});
+	$('.hex-item').click(function() {
+		$('#hex-modal').openModal();
+		$("#color").select();
+	});
+	$('.picker-item').click(function() {
+		$('#picker-modal').openModal();
+	});
+	$('.color-reset').click(function() {
+		document.getElementById("color").value = "#13A38D";
+		Materialize.toast('Color reset!', 3000, 'rounded');
+	});
+	$('.background-item').click(function() {
+		$('#background-modal').openModal();
+		$("#bg").select();
+	});
 	$('.privacy').click(function() {
 		$('#privacymodal').openModal();
 	});
-
-	// International switch
-
-	if (localStorage['international'] === "on") {
-		$('#location').attr("placeholder", "City, Country");
-	} else {
-		$('#location').attr("placeholder", "US ZIP Code");
-	}
-
-	$('#international').change(function() {
-		if ($('#international').is(':checked')) {
-			$('#location').attr("placeholder", "City, Country");
-		} else {
-			$('#location').attr("placeholder", "US ZIP Code");
-		}
+	$('.paypal').click(function() {
+		$('#paypalmodal').openModal();
+	});
+	$('.bitcoin').click(function() {
+		$('#bitcoinmodal').openModal();
 	});
 
 	// Actions on save button click/tap
 
 	$('#save-trigger').click(function() {
-		if ($('#international').is(':checked')) {
-			if ($("#location").val().length > '0') {
-				localStorage['weather'] = $("#location").val();
-				if ($('#international').is(':checked')) {
-					localStorage['international'] = "true";
-				} else {
-					localStorage['international'] = "false";
-				}
-				localStorage['unit'] = $("#unit").val();
-				localStorage['radar'] = $("#radar").val();
-				localStorage['color'] = $("#color").val();
-				localStorage['bg'] = $("#bg").val();
-				if ($('#analytics').is(':checked')) {
-					localStorage['analytics'] = "true";
-				} else {
-					localStorage['analytics'] = "false";
-				}
-				window.location.replace('index.html');
+		if (($("#location").val().length > '0') && (($("#radar-location").val().match(/^\d+$/) != null)) || ($("#radar-location").val() === "")) {
+			localStorage['weather'] = $("#location").val();
+			localStorage['unit'] = $("#unit").val();
+			localStorage['radar-location'] = $("#radar-location").val();
+			localStorage['radar-quality'] = $("#radar-quality").val();
+			localStorage['color'] = $("#color").val();
+			localStorage['bg'] = $("#bg").val();
+			if ($('#analytics').is(':checked')) {
+				localStorage['analytics'] = "true";
 			} else {
-				toast('Enter a valid location!', 3000, 'rounded');
+				localStorage['analytics'] = "false";
 			}
+			window.location.replace('index.html');
 		} else {
-			if ($("#location").val().length == '5' && $("#location").val().match(/^\d+$/)) {
-				localStorage['weather'] = $("#location").val();
-				if ($('#international').is(':checked')) {
-					localStorage['international'] = "true";
-				} else {
-					localStorage['international'] = "false";
-				}
-				localStorage['unit'] = $("#unit").val();
-				localStorage['radar'] = $("#radar").val();
-				localStorage['color'] = $("#color").val();
-				localStorage['bg'] = $("#bg").val();
-				if ($('#analytics').is(':checked')) {
-					localStorage['analytics'] = "true";
-				} else {
-					localStorage['analytics'] = "false";
-				}
-				window.location.replace('index.html');
-			} else {
-				toast('Enter a valid US ZIP code!', 3000, 'rounded');
-			}
+			toast('Enter a valid location!', 3000, 'rounded');
 		}
 	});
-	
-});
 
-// Weather
+	// Weather
 
-$(document).ready(function() {
+	var country = "";
 
 	$.simpleWeather({
 	location: localStorage['weather'],
@@ -220,8 +211,6 @@ $(document).ready(function() {
 		forecast = '<div id="forecast-container"><div class="card forecast1"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[0].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[0].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[0].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[0].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[0].text + '</p></th></tr></table></div></div><div class="card forecast2"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[1].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[1].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[1].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[1].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[1].text + '</p></th></tr></table></div></div><div class="card forecast3"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[2].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[2].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[2].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[2].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[2].text + '</p></th></tr></table></div></div><div class="card forecast4"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[3].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[3].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[3].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[3].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[3].text + '</p></th></tr></table></div></div><div class="card forecast5"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[4].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[4].code + '.png" /><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[4].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[4].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[4].text + '</p></th></tr></table></div></div></div>';
 		$("#forecast").append(forecast);
 		
-		var state = weather.region;
-		
 		var socialmessage = "It's currently " + weather.temp + "°" + weather.units.temp + " and " + weather.currently + " in " + weather.city + " right now!";
 		
 		$('#share-twitter').click(function() {
@@ -231,76 +220,73 @@ $(document).ready(function() {
 		$('#share-tumblr').click(function() {
 			window.open("https://www.tumblr.com/share?s=&v=3&t=" + encodeURIComponent(socialmessage), "Tumblr", "width=500,height=300,scrollbars=0");
 		});
+		
+		// Radar Map
+		if (weather.country === "United States") {
+			if (localStorage.getItem("radar-location") !== "") {
+				var loaded = "false";
+		  
+				var width = ($("#map").width() * localStorage["radar-quality"]);
+				var height = ($("#map").height() * localStorage["radar-quality"]);
+				var radarmap = "http://www.tephigram.weather.net/cgi-bin/razradar.cgi?zipcode=" + localStorage["radar-location"];
+				$("#map").css("background", "url(" + radarmap + "&width=" + width + "&height=" + height + ") #000000 bottom center no-repeat");
+		  
+				$('.forecast-trigger').click(function() {
+					$('#share-trigger').hide();
+					$('#settings-trigger').show();
+				});
+		  
+				$('.current-trigger').click(function() {
+					$('#share-trigger').hide();
+					$('#settings-trigger').show();
+				});
+		  
+				$('.map-trigger').click(function() {
+					$('#settings-trigger').hide();
+					$('#share-trigger').show();
+				});
+		  
+				$('#share-trigger').click(function() {
+					$('#share').openModal();
+					if (loaded === "false") {
+						$.ajax({ 
+							url: 'https://api.imgur.com/3/image',
+							headers: {
+								'Authorization': 'Client-ID bb3c3cd294bba78'
+							},
+							type: 'POST',
+							data: {
+								'image': radarmap + '&width=480&height=360'
+							},
+							dataType: 'json',
+							success: function(response) {
+								if(response.success) {
+									$('.share-content').html('This is a direct image link to the current radar map.<div class="input-field col s12"><input id="share-url" type="text" value="' + response.data.link + '"></div>');
+									$('.share-footer').append('<a href="' + response.data.link + '" target="_blank" class="waves-effect btn-flat">Open Image</a>');
+									$("#share-url").select();
+									loaded = "true";
+								}
+							},
+							error: function(xhr, status, error) {
+								$('.share-content').html('<b>Imgur error:</b><br/>' + xhr.responseText);
+							}
+						});
+					}
+					$("#share-url").select();
+				});
+			} else {
+				$('#map').html('<div class="card"><div class="card-content"><span class="card-title">Map not configured</span><p>Due to an API limitation, you need to configure the location for the radar map seperately. Go to the settings and set a radar location.</p></div></div>');
+			}
+		} else {
+			$('#map').html('<div class="card"><div class="card-content"><span class="card-title">Map unavailable</span><p>Due to an API limitation, radar maps are not available for locations outside the United States. This is being worked on, and may be available in a future update.</p></div></div>');
+		}
 
 	},
 	error: function(error) {
 		$("#current").append('<div class="card"><div class="card-content"><span class="card-title">Error</span><p>There was an error loading the weather.</p></div></div>');
 	}
 	});
-
-});
-
-// Map
-
-$(window).load(function() {
-
-	if (localStorage.getItem("international") === "false") {
-
-		var loaded = "false";
-
-		var width = ($("#map").width() * localStorage["radar"]);
-		var height = ($("#map").height() * localStorage["radar"]);
-		var radarmap = "http://www.tephigram.weather.net/cgi-bin/razradar.cgi?zipcode=" + localStorage["weather"];
-		$("#map").css("background", "url(" + radarmap + "&width=" + width + "&height=" + height + ") #000000 bottom center no-repeat");
-
-		$('.forecast-trigger').click(function() {
-			$('#share-trigger').hide();
-			$('#settings-trigger').show();
-		});
-
-		$('.current-trigger').click(function() {
-			$('#share-trigger').hide();
-			$('#settings-trigger').show();
-		});
-
-		$('.map-trigger').click(function() {
-			$('#settings-trigger').hide();
-			$('#share-trigger').show();
-		});
-
-		$('#share-trigger').click(function() {
-			$('#share').openModal();
-			if (loaded === "false") {
-				$.ajax({ 
-					url: 'https://api.imgur.com/3/image',
-					headers: {
-						'Authorization': 'Client-ID bb3c3cd294bba78'
-					},
-					type: 'POST',
-					data: {
-						'image': radarmap + '&width=480&height=360'
-					},
-					dataType: 'json',
-					success: function(response) {
-						if(response.success) {
-							$('.share-content').html('<p>This is a direct image link to the current radar map.</p><div class="row"><div class="input-field col s12"><i class="mdi-content-link prefix"></i><input id="share-url" type="text" value="' + response.data.link + '"></div></div>');
-							$('.share-footer').append('<a href="' + response.data.link + '" target="_blank" class="waves-effect btn-flat">Open Image</a>');
-							$("#share-url").select();
-							loaded = "true";
-						}
-					},
-					error: function(response) {
-						$('.share-content').html('<p><b>Imgur error:</b></p><p>' + response + '</p>');
-					}
-				});
-			}
-			$("#share-url").select();
-		});
-
-	} else {
-		$('#map').html('<div class="card"><div class="card-content"><span class="card-title">Map unavailable</span><p>Due to an API limitation, radar maps are not available for locations outside the United States. This is being worked on, and may be available in a future update.</p></div></div>');
-	}
-
+	
 });
 
 // Display everything

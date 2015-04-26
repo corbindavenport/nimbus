@@ -7,10 +7,6 @@ body {
 }
 
 @media only screen and (min-width: 600px) {
-	.tabs {
-		margin: 0 auto 0 auto !important;
-		max-width: 800px;
-	}
 	#forecast-container {
 		margin: 0 auto 0 auto;
 		max-width: 800px;
@@ -28,18 +24,9 @@ body {
 		margin: 20 auto 20 auto !important;
 	}
 }
-@media only screen and (min-width: 300px) {
-	.twitter {
-		float: left;
-		width: 130px !important;
-	}
-	.googleplus {
-		float: right;
-		width: 100px !important;
-	}
-}
+
 @media all and (max-width: 300px) {
-    .settings {
+  .settings {
 		padding-left: 0px !important;
 		padding-right: 0px !important;
 	}
@@ -71,7 +58,8 @@ body {
 }
 
 .tabs {
-	margin: 0px;
+	margin: 0 auto 0 auto !important;
+	max-width: 800px;
 	padding: 0px;
 	height: 56px;
 }
@@ -267,33 +255,6 @@ input[type=text], input[type=password], input[type=email], input[type=url], inpu
 	-ms-transition: 0.25s;
 	transition: 0.25s;
 	color: #26a69a;
-}
-
-.settings-item input {
-	height: 21px;
-	line-height: 21px;
-	width: 80%;
-	float: right;
-	text-align: right;
-	border-bottom: 0px;
-}
-
-.settings-item select {
-	height: 21px;
-	padding: 0px;
-	line-height: 21px;
-	float: right;
-	background: #EEEEEE;
-}
-
-#settings .expand {
-	border-bottom: none !important;
-	padding-bottom: 10px;
-}
-
-#settings .desc {
-	font-style: italic;
-	padding-top: 0px;
 }
 
 /* Styles for color picker */
