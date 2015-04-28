@@ -12,10 +12,10 @@ $(document).ready(function(){
 	if (localStorage.getItem("weather") === null) {
 		// Never opened before
 		localStorage['weather'] = '10001';
-		localStorage['nimbus'] = '1.2';
+		localStorage['nimbus'] = '1.3';
 		$('#welcome').openModal();
-	} else if (localStorage.getItem("nimbus") != "1.2") {
-		localStorage['nimbus'] = '1.2';
+	} else if (localStorage.getItem("nimbus") != "1.3") {
+		//localStorage['nimbus'] = '1.3';
 		$('#new').openModal();
 	}
 	
@@ -36,7 +36,7 @@ $(document).ready(function(){
 	}
 
 	if (localStorage.getItem("color") === null) {
-		localStorage['color'] = '#13A38D';
+		localStorage['color'] = '#3ca2eb';
 	}
 
 	if (localStorage.getItem("bg") === null) {
@@ -138,7 +138,7 @@ $(document).ready(function(){
 		localStorage['unit'] = 'f';
 		localStorage['radar-quality'] = '1';
 		localStorage['radar-location'] = '';
-		localStorage['color'] = '#13A38D';
+		localStorage['color'] = '#3ca2eb';
 		localStorage['bg'] = '';
 		localStorage['analytics'] = 'true';
 		window.location.replace('index.html');
@@ -158,7 +158,7 @@ $(document).ready(function(){
 		$('#picker-modal').openModal();
 	});
 	$('.color-reset').click(function() {
-		document.getElementById("color").value = "#13A38D";
+		document.getElementById("color").value = "#3ca2eb";
 		Materialize.toast('Color reset!', 3000, 'rounded');
 	});
 	$('.background-item').click(function() {
