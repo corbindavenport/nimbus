@@ -98,7 +98,15 @@ body {
 	background: transparent;
 }
 
-#settings-trigger, #save-trigger, #share-trigger {
+.settings-trigger {
+	width: 100%;
+}
+
+.btn-large:hover {
+	background-color: #FFFFFF !important;
+}
+
+#save-trigger, #share-trigger {
 	position: absolute;
 	right: 16px;
 	bottom: 16px;
@@ -106,10 +114,6 @@ body {
 	-webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12) !important;
 	-moz-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12) !important;
 	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12) !important;
-}
-
-#settings-trigger {
-	z-index: 2;
 }
 
 #save-trigger {
