@@ -6,6 +6,7 @@ $(document).ready(function(){
 	$('#current').hide();
 	$('#save-trigger').hide();
 	$('#share-trigger').hide();
+	$('.back-trigger').hide();
 	$('select').material_select();
 
 	if (localStorage.getItem("weather") === null) {
@@ -49,6 +50,10 @@ $(document).ready(function(){
 		localStorage['analytics'] = 'true';
 	}
 
+	if (localStorage.getItem("extensions") === null) {
+		localStorage['extensions'] = '';
+	}
+
 	// Read values of settings from localStorage
 
 	$("#location").val(localStorage['weather']);
@@ -58,6 +63,7 @@ $(document).ready(function(){
 	$("#color").val(localStorage['color']);
 	$("#bg").val(localStorage['bg']);
 	$("#analytics").prop('checked', JSON.parse(localStorage['analytics']));
+	var extensions = JSON.parse("[" + localStorage["extensions"] + "]");
 	
 	// Google Analytics
 
@@ -90,6 +96,7 @@ $(document).ready(function(){
 
 	$("#save-trigger").css("background", localStorage['color'], 'important');
 	$("#share-trigger").css("background", localStorage['color'], 'important');
+	$(".back-trigger").css("background", localStorage['color'], 'important');
 	$(".btn").css("background", localStorage['color'], 'important');
 	$(".btn").css("background", localStorage['color'], 'important');
 
@@ -102,6 +109,13 @@ $(document).ready(function(){
 	$(document).on('click', ".settings-trigger", function() {
 		$('#settings').fadeIn( "slow", function() {});
 		$('#save-trigger').fadeIn( "slow", function() {});
+	});
+
+	// Actions on extensions page back button click/tap
+
+	$(document).on('click', ".back-trigger", function() {
+		$('#extensions').fadeOut( "slow", function() {});
+		$('.back-trigger').fadeOut( "slow", function() {});
 	});
 
 	// Social Media links
@@ -147,6 +161,10 @@ $(document).ready(function(){
 	$('.radar-quality-item').click(function() {
 		$('#radar-quality-modal').openModal();
 	});
+	$('.extensions-item').click(function() {
+		$('#extensions').fadeIn( "slow", function() {});
+		$('.back-trigger').fadeIn( "slow", function() {});
+	});
 	$('.hex-item').click(function() {
 		$('#hex-modal').openModal();
 		$("#color").select();
@@ -175,7 +193,7 @@ $(document).ready(function(){
 	// Actions on save button click/tap
 
 	$('#save-trigger').click(function() {
-		if (($("#location").val().length > '0') && (($("#radar-location").val().match(/^\d+$/) != null)) || ($("#radar-location").val() === "")) {
+		if (($("#location").val().length > '0') || (($("#radar-location").val().match(/^\d+$/) != null))) {
 			localStorage['weather'] = $("#location").val();
 			localStorage['unit'] = $("#unit").val();
 			localStorage['radar-location'] = $("#radar-location").val();
@@ -187,11 +205,67 @@ $(document).ready(function(){
 			} else {
 				localStorage['analytics'] = "false";
 			}
+			var extensionstemp = "";
+			for (var i = 0; i < extensions.length; ++i) {
+				extensionstemp += '"' + extensions[i] + '",';
+			}
+			extensionstemp = extensionstemp.substring(0, extensionstemp.length - 1); // Cut off last comma
+			localStorage["extensions"] = extensionstemp;
 			window.location.replace('index.html');
 		} else {
-			toast('Enter a valid location!', 3000, 'rounded');
+			Materialize.toast('Enter a valid location!', 3000, 'rounded');
 		}
 	});
+
+	// Extensions
+
+	function reloadExtensions() {
+		if(extensions.length === 0) {
+			$('.installedlist').html('<li class="settings-item"><i>No extensions installed.</i>');
+		} else {
+		$('.installedlist').html('');
+			for (var i = 0; i < extensions.length; ++i) {
+				var extensionid = i;
+				$.getScript( extensions[i] )
+				.done(function() {
+					console.log('Loaded extension: "' + extension.name + '"\nExtension ID: ' + extensionid);
+					$('.installedlist').append('<li class="settings-item extension" id="' + extensionid + '"><b>' + extension.name + ' ' + extension.version + '</b><br />' + extension.description + '<br /><a class="remove-extension" href="#">Remove Extension</a></li>');
+					main();
+				})
+				.fail(function() {
+					console.log( "Error loading extension " + extensionid);
+					Materialize.toast('Error loading extension ' + extensionid + '!');
+				});
+			}
+		}
+	}
+
+	$('.extensions-url-item').click(function() {
+		$('#extensions-url-modal').openModal();
+	});
+
+	$('.extensions-info-item').click(function() {
+		$('#extensions-info-modal').openModal();
+	});
+
+	$(document).on('click', ".remove-extension", function() {
+		var id = $(this).parent().attr('id');
+		extensions.splice(id,1);
+		$( "#" + id ).fadeOut( 500, function() {
+			reloadExtensions();
+			Materialize.toast('Extension removed.', 3000, 'rounded');
+		});
+	});
+
+	$(document).on('click', ".url-confirm", function() {
+		var url = document.getElementById("extension-url").value;
+		extensions.unshift(url);
+		document.getElementById("extension-url").value = "";
+		Materialize.toast('Extension added.', 3000, 'rounded');
+		reloadExtensions();
+	});
+
+	reloadExtensions();
 
 	// Weather
 
@@ -203,10 +277,10 @@ $(document).ready(function(){
 	unit: localStorage['unit'],
 	success: function(weather) {
 		now = '<div class="card"><div class="card-content"><span class="card-title">' + weather.city + ', ' + weather.region + '</span><table><tr><th class="weather-icon"><img src="img/' + weather.code + '.png" /></th><th class="weather-info"><h3>' + weather.temp + '&deg;' + weather.units.temp + '</h3><p>' + weather.high + '&deg;' + weather.units.temp + ' / ' + weather.low + '&deg;' + weather.units.temp + '</p></th></tr></table></div></div><div class="card"><div class="card-content"><span class="card-title">Winds</span><p><b>Wind chill:</b> ' + weather.wind.chill + '&deg;' + weather.units.temp + '<p><b>Speed:</b> ' + weather.wind.speed + ' ' + weather.units.speed + ' ' + weather.wind.direction + '</div></div><div class="card"><div class="card-content"><span class="card-title">Daylight</span><p><b>Sunrise:</b> ' + weather.sunrise + '</p><p><b>Sunset:</b> ' + weather.sunset + '</p><p><b>Visibility:</b> ' + weather.visibility + ' ' + weather.units.distance + '</p></div></div><div class="card"><div class="card-content"><div class="row"><button type="submit" name="action" class="btn-flat col s12 m6" id="share-twitter">Share on Twitter<i class="mdi-content-send right"></i></button><button type="submit" name="action" class="btn-flat col s12 m6" id="share-tumblr">Share on Tumblr<i class="mdi-content-send right"></i></button></div></div></div><div class="card"><div class="card-content">Weather info last updated ' + weather.updated + ' from Yahoo Weather.</div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>';
-		$("#current").append(now);
+		$("#current").html(now);
 
 		forecast = '<div id="forecast-container"><div class="card forecast1"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[0].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[0].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[0].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[0].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[0].text + '</p></th></tr></table></div></div><div class="card forecast2"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[1].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[1].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[1].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[1].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[1].text + '</p></th></tr></table></div></div><div class="card forecast3"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[2].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[2].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[2].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[2].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[2].text + '</p></th></tr></table></div></div><div class="card forecast4"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[3].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[3].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[3].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[3].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[3].text + '</p></th></tr></table></div></div><div class="card forecast5"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[4].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[4].code + '.png" /><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[4].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[4].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[4].text + '</p></th></tr></table></div></div></div>';
-		$("#forecast").append(forecast);
+		$("#forecast").html(forecast);
 		
 		var socialmessage = "It's currently " + weather.temp + "°" + weather.units.temp + " and " + weather.currently + " in " + weather.city + " right now!";
 		
