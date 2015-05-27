@@ -1,6 +1,8 @@
 Nimbus
 ================
 [![Get it on Chrome Web Store](http://i.imgur.com/gdDBbVh.png)](https://chrome.google.com/webstore/detail/nimbus/adflhgieiiiadgpadbmnmenhgmocpckh) [![Get it on Google Play](http://i.imgur.com/GxU6XWQ.png)](https://play.google.com/store/apps/details?id=com.corbin.nimbus) [![Get it on Firefox Marketplace](http://i.imgur.com/JooqNu9.png)](https://marketplace.firefox.com/app/nimbus)
+
+[![Get it for Windows 32-bit](http://i.imgur.com/41zBiMU.png)](https://onedrive.live.com/download?resid=bc57a25103735bea!3482&authkey=!AF0WfqTat7sp7-4&ithint=file%2cexe) [![Get it for Windows 64-bit](http://i.imgur.com/UFv1uwh.png)](https://onedrive.live.com/download?resid=bc57a25103735bea!3483&authkey=!ALODRLYQ2wSDac0&ithint=file%2cexe)
 ---------------------------------------------------------
 Nimbus is a simple and powerful weather app, available for Chrome, Firefox, Android, and as a web app. It's easy to use, fast, customization, and free. What more can you ask for?
 
@@ -11,7 +13,7 @@ Nimbus is a simple and powerful weather app, available for Chrome, Firefox, Andr
 * Animated radar image
 * Share current radar image via Imgur
 
-Nimbus is open source under the GPLv3 license. Nimbus is also available on the Chrome Web Store, Google Play Store for Android 4.0+ devices, and the Firefox Marketplace.
+Nimbus is open source under the GPLv3 license. Nimbus is also available on Windows 7 and up (32-bit & 64-bit), the Chrome Web Store, Google Play Store for Android 4.0+ devices, and the Firefox Marketplace.
 
 ---------------------------------------------------------
 
