@@ -60,7 +60,7 @@
 		<b>You can enter any city, ZIP Code, or coordinates.</b>
 		<div class="input-field"><input id="location" placeholder="City, Country" type="text"></div>
 	</div>
-	<div class="modal-footer">
+	<div class="modal-footer share-footer">
 		<a class="waves-effect btn-flat modal-close">Select</a>
 	</div>
 </div>
@@ -70,7 +70,7 @@
 		<b>Imperial (American) and Metric units are supported.</b>
 		<select id="unit"><option value="f">Imperial</option><option value="c">Metric</option></select></p>
 	</div>
-	<div class="modal-footer">
+	<div class="modal-footer share-footer">
 		<a class="waves-effect btn-flat modal-close">Select</a>
 	</div>
 </div>
@@ -90,7 +90,7 @@
 	  <b>Only United States ZIP codes are supported.</b>
 		<div class="input-field"><input id="radar-location" placeholder="US ZIP Code" type="text"></div>
 	</div>
-	<div class="modal-footer">
+	<div class="modal-footer share-footer">
 		<a class="waves-effect btn-flat modal-close">Select</a>
 	</div>
 </div>
@@ -100,7 +100,7 @@
 		<b>If you want to reduce data usage (or decrease loading times), you can reduce the quality of the radar image. This will not affect the quality of shared maps.</b>
 		<select id="radar-quality"><option value="1">100%</option><option value="0.75">75%</option><option value="0.50">50%</option><option value="0.25">25%</option></select>
 	</div>
-	<div class="modal-footer">
+	<div class="modal-footer share-footer">
 		<a class="waves-effect btn-flat modal-close">Select</a>
 	</div>
 </div>
@@ -110,7 +110,7 @@
 		<b>This changes the main interface color of Nimbus. Any six-digit hex color is accepted.</b>
 		<div class="input-field"><input id="color" name="color" type="text" placeholder="Hex color"></div>
 	</div>
-	<div class="modal-footer">
+	<div class="modal-footer share-footer">
 		<a class="waves-effect btn-flat modal-close">Select</a>
 	</div>
 </div>
@@ -134,33 +134,11 @@
 	</div>
 </div>
 
-<div id="extensions-url-modal" class="modal">
-	<div class="modal-content">
-		<b>Here you can enter the URL of a Nimbus extension to install it. Be careful which extensions you install, because they have access to data stored in Nimbus.</b>
-		<div class="input-field"><input id="extension-url" type="text" placeholder="http://example.com/extension.js"></div>
-	</div>
-	<div class="modal-footer">
-		<a class="waves-effect btn-flat modal-close url-confirm">Add</a>
-		<a class="waves-effect btn-flat modal-close">Cancel</a>
-	</div>
-</div>
-
-<div id="extensions-info-modal" class="modal">
-	<div class="modal-content">
-		<p>This will open the Nimbus wiki on GitHub in a new window.</p>
-	</div>
-	<div class="modal-footer">
-	<a href="https://github.com/corbindavenport/nimbus/wiki/Extension-Development" target="_blank" class="waves-effect btn-flat">Continue</a>
-	<a class="waves-effect btn-flat modal-close">Cancel</a>
-	</div>
-</div>
-
 <div id="new" class="modal modal-fixed-footer">
 	<div class="modal-content">
 		<h4>What's new</h4>
-		<p>Nimbus 2.0 includes new features and improvements to make it better than ever. Here's some of the improvements in this update.</p>
+		<p>Nimbus 1.3 includes new features and improvements to make it better than ever. Here's some of the improvements in this update.</p>
 		<p><u>New icon</u>: Nimbus has a shiny new icon!</p>
-		<p><u>Extensions</u>: Nimbus now supports extensions, scripts that can extend the functionality of Nimbus. Open 'Extension Manager' in the settings for more information.</p>
 		<p><u>Moved settings button</u>: The settings button no longer hovers on the screen. It is now located at the bottom of the Current tab.</p>
 		<p><i>And lots of bug fixes and UI improvements!</i></p>
 	</div>
@@ -172,7 +150,7 @@
 <div id="welcome" class="modal">
 	<div class="modal-content">
 		<p>Welcome to Nimbus, a simple (but powerful) weather app.</p>
-		<p>Your location is currently set to New York. You can change your location by tapping the Settings button at the bottom of the Current tab.</p>
+		<p>Your location is currently set to New York. You can change your location by tapping the Settings button on the lower right corner.</p>
 	</div>
 	<div class="modal-footer">
 		<a class="waves-effect btn-flat modal-close">Close</a>
@@ -206,7 +184,6 @@
 		<p>Weather data is retrieved from Yahoo Weather, which is subject to the <a href="https://info.yahoo.com/privacy/us/yahoo/weather/details.html" target="_blank">Yahoo Weather Privacy Policy</a>. Note that the only data sent online is your ZIP Code, which is used to retrieve weather data. The weather radar is retrieved from Freese-Notis Weather, which is subject to their <a href="http://www.weather.net/privacy/" target="_blank">Privacy Policy</a>.</p>
 		<p>Nimbus uses Google Analytics by default, which is a web analysis service provided by Google. This is used by the developer(s) of Nimbus to determine how users interact with Nimbus, and help develop the app to better suit it's users. Google utilizes the data collected to track and examine the use of Nimbus, to prepare reports on its activities and share them with other Google services. Google may use the data collected to contextualize and personalize the ads of its own advertising network. The use of Google Analytics is subject to Google's Privacy Policy, which can be found <a href="http://www.google.com/intl/en/policies/privacy/" target="_blank">here</a>. However, all Google Analytics services can be completely disabled by the user in the Nimbus app settings. Furthermore, none of your app settings (ZIP code, unit of measurement, theme, etc) are sent through Analytics.</p>
 		<p>Nibmus includes functionality to share the current weather forecast (or radar image) for the specified location through Twitter and Tumblr. By sharing this information through Twitter and Tumblr, you are subject to the privacy policies of <a href="https://twitter.com/privacy" target="_blank">Twitter</a> and/or <a href="https://www.tumblr.com/policy/en/privacy" target="_blank">Tumblr</a>. The current temperature, current weather conditions, and the currently specified location are passed to those services only when one of the share buttons is selected. If the radar image is shared, only the URL to the generated image is sent to those services.</p>
-		<p>Nimbus also has the ability to install 'extensions', scripts that extend the functionality of Nimbus. Extensions have virtually unlimited access to data stored by Nimbus, and are not limited in scope. Extensions theoretically have the ability to use it's own analytics, or send Nimbus data over the internet. The developer(s) of Nimbus are not responsible for any damage caused by an extension.</p>
 	</div>
 	<div class="modal-footer">
 		<a class="waves-effect btn-flat modal-close">Close</a>
@@ -230,8 +207,6 @@
 		<li class="settings-item title"><b>Radar</b></li>
 		<li class="settings-item radar-location-item">Location</li>
 		<li class="settings-item radar-quality-item">Radar quality</li>
-		<li class="settings-item title"><b>Extensions</b></li>
-		<li class="settings-item extensions-item">Manage extensions</li>
 		<li class="settings-item title"><b>Theme</b></li>
 		<li class="settings-item hex-item">Pick color from Hex Code</li>
 		<li class="settings-item picker-item">Pick color from Color Picker</li>
@@ -252,17 +227,6 @@
 	</ul>
 </div>
 
-<div id="extensions">
-	<ul class="settings">
-		<li class="settings-item title"><b>About Extensions</b></li>
-		<li class="settings-item">Extensions are scripts that extends or changes the functionality of Nimbus.</li>
-		<li class="settings-item extensions-url-item">Install extension</li>
-		<li class="settings-item extensions-info-item">More information</li>
-		<li class="settings-item title"><b>Installed extensions</b></li>
-		<span class="installedlist"><li class="settings-item"><i>There was an error loading extensions.</i></li></span>
-	</ul>
-</div>
-
 <div id="forecast" class="content"></div>
 
 <div id="current" class="content"></div>
@@ -272,8 +236,6 @@
 <a class="btn-floating btn-large waves-effect waves-light modal-trigger theme" id="save-trigger" href="#"><i class="mdi-content-save"></i></a>
 
 <a class="btn-floating btn-large waves-effect waves-light modal-trigger theme" id="share-trigger" href="#"><i class="mdi-social-share"></i></a>
-
-<a class="btn-floating btn-large waves-effect waves-light modal-trigger back-trigger theme" href="#"><i class="mdi-hardware-keyboard-backspace"></i></a>
 
 <div class="preloader-wrapper big active">
 	<div class="spinner-layer spinner-blue">
