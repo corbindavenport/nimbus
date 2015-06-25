@@ -198,18 +198,73 @@ $(document).ready(function(){
 	woeid: '',
 	unit: localStorage['unit'],
 	success: function(weather) {
-		current = '<div class="card"><div class="card-content"><span class="card-title">' + weather.city + ', ' + weather.region + '</span><p>' + weather.currently + '</p><table><tr><th class="weather-icon"><img src="img/' + weather.code + '.png" /></th><th class="weather-info"><p>' + weather.high + '&deg;' + weather.units.temp + ' / ' + weather.low + '&deg;' + weather.units.temp + '</p><p><h3>' + weather.temp + '&deg;' + weather.units.temp + '</h3></p></th></tr></table><div class="weather-updated">Last updated ' + weather.updated + '</div></div></div><div class="card"><div class="card-content"><span class="card-title">Winds</span><p><b>Wind chill:</b> ' + weather.wind.chill + '&deg;' + weather.units.temp + '<p><b>Speed:</b> ' + weather.wind.speed + ' ' + weather.units.speed + ' ' + weather.wind.direction + '</div></div><div class="card"><div class="card-content"><span class="card-title">Daylight</span><p><b>Sunrise:</b> ' + weather.sunrise + '</p><p><b>Sunset:</b> ' + weather.sunset + '</p><p><b>Visibility:</b> ' + weather.visibility + ' ' + weather.units.distance + '</p></div></div><div class="card"><div class="card-content"><div class="row"><button type="submit" name="action" class="btn-flat col s12 m6" id="share-twitter">Share on Twitter<i class="mdi-content-send right"></i></button><button type="submit" name="action" class="btn-flat col s12 m6" id="share-tumblr">Share on Tumblr<i class="mdi-content-send right"></i></button></div></div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>';
-		$("#current").append(current);
+		// Determine correct icon
+		// Yahoo Weather API condition codes: https://developer.yahoo.com/weather/documentation.html#codes
+		var icon = "";
+		if (weather.code == 0) {
+			icon = "wi-tornado";
+		} else if (weather.code == 1 || weather.code == 45) {
+			icon = "wi-storm-showers";
+		} else if (weather.code == 2) {
+			icon = "wi-lightning";
+		} else if (weather.code == 3 || weather.code == 4 || weather.code == 47) {
+			icon = "wi-thunderstorm";
+		} else if (weather.code == 5 || weather.code == 46) {
+			icon = "wi-rain-mix";
+		} else if (weather.code == 6 || weather.code == 7 || weather.code == 13 || weather.code == 14 || weather.code == 18 || weather.code == 36) {
+			icon = "wi-sleet";
+		} else if (weather.code == 8 || weather.code == 9 || weather.code == 10 || weather.code == 11 || weather.code == 12) {
+			icon = "wi-showers";
+		} else if (weather.code == 15 || weather.code == 41 || weather.code == 42 || weather.code == 43) {
+			icon = "wi-snow";
+		} else if (weather.code == 16) {
+			icon = "wi-snow-wind";
+		} else if (weather.code == 17) {
+			icon = "wi-hail";
+		} else if (weather.code == 19) {
+			icon = "wi-dust";
+		} else if (weather.code == 20) {
+			icon = "wi-fog";
+		} else if (weather.code == 21) {
+			icon = "wi-day-haze";
+		} else if (weather.code == 22) {
+			icon = "wi-smoke";
+		} else if (weather.code == 23 || weather.code == 24) {
+			icon = "wi-windy";
+		} else if (weather.code == 25) {
+			icon = "wi-snowflake-cold";
+		} else if (weather.code == 26) {
+			icon = "wi-cloud";
+		} else if (weather.code == 27 || weather.code == 29) {
+			icon = "wi-night-cloudy";
+		} else if (weather.code == 28 || weather.code == 30) {
+			icon = "wi-day-cloudy";
+		} else if (weather.code == 31 || weather.code == 33 || weather.code == 44) {
+			icon = "wi-stars";
+		} else if (weather.code == 32 || weather.code == 34) {
+			icon = "wi-day-sunny";
+		} else if (weather.code == 36) {
+			icon = "wi-hot";
+		} else if (weather.code == 37 || weather.code == 38 || weather.code == 39) {
+			icon = "wi-thunderstorm";
+		} else if (weather.code == 40) {
+			icon = "wi-showers";
+		} else if (weather.code == 3200) {
+			icon = "wi-alien";
+		}
+		console.log(weather.code + "" + icon);
 
+		// Fill content
+		current = '<div class="card"><div class="card-content"><span class="card-title">' + weather.city + ', ' + weather.region + '</span><table><tr><th class="weather-icon"><i class="wi ' + icon + '"></i></th><th class="weather-info"><span style="font-size: 36px; font-weight: 300;">' + weather.temp + '&deg;' + weather.units.temp + '</span><br />' + weather.high + '&deg;' + weather.units.temp + ' / ' + weather.low + '&deg;' + weather.units.temp + '</th></tr></table><div class="weather-updated">Last updated ' + weather.updated + '</div></div></div><div class="card"><div class="card-content"><span class="card-title">Winds</span><p><b>Wind chill:</b> ' + weather.wind.chill + '&deg;' + weather.units.temp + '<p><b>Speed:</b> ' + weather.wind.speed + ' ' + weather.units.speed + ' ' + weather.wind.direction + '</div></div><div class="card"><div class="card-content"><span class="card-title">Daylight</span><p><b>Sunrise:</b> ' + weather.sunrise + '</p><p><b>Sunset:</b> ' + weather.sunset + '</p><p><b>Visibility:</b> ' + weather.visibility + ' ' + weather.units.distance + '</p></div></div><div class="card"><div class="card-content"><div class="row"><button type="submit" name="action" class="btn-flat col s12 m6" id="share-twitter">Share on Twitter<i class="mdi-content-send right"></i></button><button type="submit" name="action" class="btn-flat col s12 m6" id="share-tumblr">Share on Tumblr<i class="mdi-content-send right"></i></button></div></div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>';
+		$("#current").append(current);
 		forecast = '<div id="forecast-container"><div class="card forecast1"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[0].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[0].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[0].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[0].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[0].text + '</p></th></tr></table></div></div><div class="card forecast2"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[1].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[1].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[1].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[1].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[1].text + '</p></th></tr></table></div></div><div class="card forecast3"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[2].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[2].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[2].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[2].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[2].text + '</p></th></tr></table></div></div><div class="card forecast4"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[3].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[3].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[3].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[3].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[3].text + '</p></th></tr></table></div></div><div class="card forecast5"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[4].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[4].code + '.png" /><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[4].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[4].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[4].text + '</p></th></tr></table></div></div></div>';
 		$("#forecast").append(forecast);
-		
+
+		// Share buttons
 		var socialmessage = "It's currently " + weather.temp + "°" + weather.units.temp + " and " + weather.currently + " in " + weather.city + " right now!";
-		
 		$('#share-twitter').click(function() {
 			window.open("https://twitter.com/intent/tweet?via=NimbusWeather&text=" + encodeURIComponent(socialmessage), "Twitter", "width=500,height=300,scrollbars=0");
 		});
-
 		$('#share-tumblr').click(function() {
 			window.open("https://www.tumblr.com/share?s=&v=3&t=" + encodeURIComponent(socialmessage), "Tumblr", "width=500,height=300,scrollbars=0");
 		});
