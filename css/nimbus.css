@@ -102,11 +102,11 @@ body {
 	width: 100%;
 }
 
-.btn-large:hover {
+.settings-trigger:hover {
 	background-color: #FFFFFF !important;
 }
 
-#save-trigger, #share-trigger {
+#share-trigger {
 	position: absolute;
 	right: 16px;
 	bottom: 16px;
@@ -114,10 +114,6 @@ body {
 	-webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12) !important;
 	-moz-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12) !important;
 	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12) !important;
-}
-
-#save-trigger {
-	z-index: 3;
 }
 
 .preloader-wrapper {
@@ -185,6 +181,17 @@ td, th {
 	text-align: center !important;
 }
 
+.weather-updated {
+	text-align: right;
+	font-size: 12px;
+}
+
+@media all and (max-width: 400px) {
+	.weather-updated {
+		margin-top: 10px;
+	}
+}
+
 .forecast-icon {
 	width: 30%;
 }
@@ -215,21 +222,19 @@ input[type=text], input[type=password], input[type=email], input[type=url], inpu
 
 #settings {
 	position: absolute;
-	top: 56px;
+	top: 0px;
 	left: 0px;
 	right: 0px;
 	bottom: 0px;
 	overflow: auto;
 	background: #EEEEEE;
-	z-index: 2;
-	padding-left: 5px;
-	padding-right: 5px;
+	z-index: 3;
 	min-width: 260px;
 	display: none;
 }
 
 .settings {
-	margin: 0px auto 0px auto;
+	margin: 56px auto 0px auto;
 	padding: 10px 5px 20px 5px;
 	max-width: 790px;
 	-webkit-border-radius: 2px;
@@ -237,6 +242,14 @@ input[type=text], input[type=password], input[type=email], input[type=url], inpu
 	border-radius: 2px;
 	background-clip: padding-box;
 	overflow: hidden;
+}
+
+.settings-save {
+	width: 100% !important;
+	margin: 0px !important;
+	height: 56px !important;
+	line-height: 56px !important;
+	position: fixed;
 }
 
 .settings .settings-item {

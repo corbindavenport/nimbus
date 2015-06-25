@@ -4,16 +4,14 @@ $(document).ready(function(){
 
 	$('ul.tabs').tabs();
 	$('#current').hide();
-	$('#save-trigger').hide();
-	$('#share-trigger').hide();
 	$('select').material_select();
 
 	if (localStorage.getItem("weather") === null) {
 		// Never opened before
 		localStorage['weather'] = '10001';
-		localStorage['nimbus'] = '1.3';
+		localStorage['nimbus'] = '2.0';
 		$('#welcome').openModal();
-	} else if (localStorage.getItem("nimbus") != "1.3") {
+	} else if (localStorage.getItem("nimbus") != "2.0") {
 		//localStorage['nimbus'] = '1.3';
 		$('#new').openModal();
 	}
@@ -88,8 +86,7 @@ $(document).ready(function(){
 	
 	// Set buttons color
 
-	$("#save-trigger").css("background", localStorage['color'], 'important');
-	$("#share-trigger").css("background", localStorage['color'], 'important');
+	$(".settings-save").css("background", localStorage['color'], 'important');
 	$(".btn").css("background", localStorage['color'], 'important');
 	$(".btn").css("background", localStorage['color'], 'important');
 
@@ -101,7 +98,6 @@ $(document).ready(function(){
 
 	$(document).on('click', ".settings-trigger", function() {
 		$('#settings').fadeIn( "slow", function() {});
-		$('#save-trigger').fadeIn( "slow", function() {});
 	});
 
 	// Social Media links
@@ -174,7 +170,7 @@ $(document).ready(function(){
 
 	// Actions on save button click/tap
 
-	$('#save-trigger').click(function() {
+	$('.settings-save').click(function() {
 		if (($("#location").val().length > '0') && (($("#radar-location").val().match(/^\d+$/) != null)) || ($("#radar-location").val() === "")) {
 			localStorage['weather'] = $("#location").val();
 			localStorage['unit'] = $("#unit").val();
@@ -202,8 +198,8 @@ $(document).ready(function(){
 	woeid: '',
 	unit: localStorage['unit'],
 	success: function(weather) {
-		now = '<div class="card"><div class="card-content"><span class="card-title">' + weather.city + ', ' + weather.region + '</span><table><tr><th class="weather-icon"><img src="img/' + weather.code + '.png" /></th><th class="weather-info"><h3>' + weather.temp + '&deg;' + weather.units.temp + '</h3><p>' + weather.high + '&deg;' + weather.units.temp + ' / ' + weather.low + '&deg;' + weather.units.temp + '</p></th></tr></table></div></div><div class="card"><div class="card-content"><span class="card-title">Winds</span><p><b>Wind chill:</b> ' + weather.wind.chill + '&deg;' + weather.units.temp + '<p><b>Speed:</b> ' + weather.wind.speed + ' ' + weather.units.speed + ' ' + weather.wind.direction + '</div></div><div class="card"><div class="card-content"><span class="card-title">Daylight</span><p><b>Sunrise:</b> ' + weather.sunrise + '</p><p><b>Sunset:</b> ' + weather.sunset + '</p><p><b>Visibility:</b> ' + weather.visibility + ' ' + weather.units.distance + '</p></div></div><div class="card"><div class="card-content"><div class="row"><button type="submit" name="action" class="btn-flat col s12 m6" id="share-twitter">Share on Twitter<i class="mdi-content-send right"></i></button><button type="submit" name="action" class="btn-flat col s12 m6" id="share-tumblr">Share on Tumblr<i class="mdi-content-send right"></i></button></div></div></div><div class="card"><div class="card-content">Weather info last updated ' + weather.updated + ' from Yahoo Weather.</div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>';
-		$("#current").append(now);
+		current = '<div class="card"><div class="card-content"><span class="card-title">' + weather.city + ', ' + weather.region + '</span><p>' + weather.currently + '</p><table><tr><th class="weather-icon"><img src="img/' + weather.code + '.png" /></th><th class="weather-info"><p>' + weather.high + '&deg;' + weather.units.temp + ' / ' + weather.low + '&deg;' + weather.units.temp + '</p><p><h3>' + weather.temp + '&deg;' + weather.units.temp + '</h3></p></th></tr></table><div class="weather-updated">Last updated ' + weather.updated + '</div></div></div><div class="card"><div class="card-content"><span class="card-title">Winds</span><p><b>Wind chill:</b> ' + weather.wind.chill + '&deg;' + weather.units.temp + '<p><b>Speed:</b> ' + weather.wind.speed + ' ' + weather.units.speed + ' ' + weather.wind.direction + '</div></div><div class="card"><div class="card-content"><span class="card-title">Daylight</span><p><b>Sunrise:</b> ' + weather.sunrise + '</p><p><b>Sunset:</b> ' + weather.sunset + '</p><p><b>Visibility:</b> ' + weather.visibility + ' ' + weather.units.distance + '</p></div></div><div class="card"><div class="card-content"><div class="row"><button type="submit" name="action" class="btn-flat col s12 m6" id="share-twitter">Share on Twitter<i class="mdi-content-send right"></i></button><button type="submit" name="action" class="btn-flat col s12 m6" id="share-tumblr">Share on Tumblr<i class="mdi-content-send right"></i></button></div></div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>';
+		$("#current").append(current);
 
 		forecast = '<div id="forecast-container"><div class="card forecast1"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[0].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[0].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[0].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[0].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[0].text + '</p></th></tr></table></div></div><div class="card forecast2"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[1].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[1].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[1].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[1].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[1].text + '</p></th></tr></table></div></div><div class="card forecast3"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[2].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[2].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[2].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[2].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[2].text + '</p></th></tr></table></div></div><div class="card forecast4"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[3].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[3].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[3].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[3].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[3].text + '</p></th></tr></table></div></div><div class="card forecast5"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[4].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[4].code + '.png" /><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[4].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[4].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[4].text + '</p></th></tr></table></div></div></div>';
 		$("#forecast").append(forecast);
@@ -228,49 +224,6 @@ $(document).ready(function(){
 				var radarmap = "http://www.tephigram.weather.net/cgi-bin/razradar.cgi?zipcode=" + localStorage["radar-location"];
 				$("#map").css("background", "url(" + radarmap + "&width=" + width + "&height=" + height + ") #000000 bottom center no-repeat");
 		  
-				$('.forecast-trigger').click(function() {
-					$('#share-trigger').hide();
-					$('#settings-trigger').show();
-				});
-		  
-				$('.current-trigger').click(function() {
-					$('#share-trigger').hide();
-					$('#settings-trigger').show();
-				});
-		  
-				$('.map-trigger').click(function() {
-					$('#settings-trigger').hide();
-					$('#share-trigger').show();
-				});
-		  
-				$('#share-trigger').click(function() {
-					$('#share').openModal();
-					if (loaded === "false") {
-						$.ajax({ 
-							url: 'https://api.imgur.com/3/image',
-							headers: {
-								'Authorization': 'Client-ID bb3c3cd294bba78'
-							},
-							type: 'POST',
-							data: {
-								'image': radarmap + '&width=480&height=360'
-							},
-							dataType: 'json',
-							success: function(response) {
-								if(response.success) {
-									$('.share-content').html('This is a direct image link to the current radar map.<div class="input-field col s12"><input id="share-url" type="text" value="' + response.data.link + '"></div>');
-									$('.share-footer').append('<a href="' + response.data.link + '" target="_blank" class="waves-effect btn-flat">Open Image</a>');
-									$("#share-url").select();
-									loaded = "true";
-								}
-							},
-							error: function(xhr, status, error) {
-								$('.share-content').html('<b>Imgur error:</b><br/>' + xhr.responseText);
-							}
-						});
-					}
-					$("#share-url").select();
-				});
 			} else {
 				$('#map').html('<div class="card"><div class="card-content"><span class="card-title">Map not configured</span><p>Due to an API limitation, you need to configure the location for the radar map seperately. Go to the settings and set a radar location.</p></div></div>');
 			}
@@ -280,7 +233,9 @@ $(document).ready(function(){
 
 	},
 	error: function(error) {
-		$("#current").append('<div class="card"><div class="card-content"><span class="card-title">Error</span><p>There was an error loading the weather.</p></div></div>');
+		$("#current").html('<div class="card"><div class="card-content"><span class="card-title">Error</span><p>There was an error loading the weather.</p></div><div class="card-action"><a href="javascript:window.location.replace(' + index + ');">Try again</a></div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>');
+		$("#forecast").html('<div class="card"><div class="card-content"><span class="card-title">Error</span><p>There was an error loading the forecast.</p></div><div class="card-action"><a href="javascript:window.location.replace(' + index + ');">Try again</a></div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>');
+		$("#map").html('<div class="card"><div class="card-content"><span class="card-title">Error</span><p>There was an error loading the radar map.</p></div><div class="card-action"><a href="javascript:window.location.replace(' + index + ');">Try again</a></div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>');
 	}
 	});
 	
