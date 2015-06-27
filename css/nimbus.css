@@ -6,7 +6,7 @@ body {
 	font-size: 14px !important;
 }
 
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 650px) {
 	#forecast-container {
 		margin: 0 auto 0 auto;
 		max-width: 800px;
@@ -163,7 +163,8 @@ body {
 }
 
 table {
-	margin-top: 10px;
+	margin-top: 30px;
+	margin-bottom: 30px;
 }
 
 td, th {
@@ -173,38 +174,53 @@ td, th {
 
 .weather-icon {
 	width: 50%;
-	font-size: 80px;
 	text-align: center;
-}
-
-.weather-icon img {
-	width: 100%;
-	max-width: 200px;
-	max-height: 200px;
 }
 
 .weather-info {
 	text-align: center !important;
 }
 
+.weather-info .temp {
+	font-weight: 300;
+}
+
+@media only screen and (max-width: 320px) {
+	.weather-icon {font-size: 60px;}
+	.weather-info .temp {font-size: 40px;}
+}
+
+@media only screen and (min-width: 320px) {
+	.weather-icon {font-size: 80px;}
+	.weather-info .temp {font-size: 50px;}
+}
+
 .weather-updated {
 	text-align: right;
 	font-size: 12px;
-	margin-top: 20px;
 }
 
 .forecast-icon {
 	width: 30%;
-}
-
-.forecast-icon img {
-	width: 100%;
-	max-width: 150px;
-	max-height: 150px;
+	text-align: center;
 }
 
 .forecast-info {
 	text-align: center !important;
+}
+
+.forecast-info .temp {
+	font-weight: 300;
+}
+
+@media only screen and (max-width: 270px) {
+	.forecast-icon {font-size: 40px;}
+	.forecast-info .temp {font-size: 20px;}
+}
+
+@media only screen and (min-width: 270px) {
+	.forecast-icon {font-size: 50px;}
+	.forecast-info .temp {font-size: 25px;}
 }
 
 .card-content .row {
