@@ -17,8 +17,9 @@ Nimbus is open source under the GPLv3 license. Nimbus is available on Windows 7 
 
 ---------------------------------------------------------
 
-__New in Nimbus 3.0:__
+__New in Nimbus 2.0:__
 * **New icon**: Nimbus has a shiny new icon!
+* **New forecast layout**: The forecast screen has been updated with a cleaner layout.
 * **New weather icons**: Nimbus now uses [Weather Icons by Erik Flowers](http://erikflowers.github.io/weather-icons/) instead of Google Now-style icons.
 * **Moved settings button**: The settings button no longer hovers on the screen. It is now located at the bottom of the Current tab.
 * And lots of bug fixes and small improvements!
