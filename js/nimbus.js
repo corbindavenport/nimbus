@@ -4,39 +4,38 @@ $(document).ready(function(){
 
 	$('ul.tabs').tabs();
 	$('#current').hide();
-	$('#settings-trigger').hide();
-	$('#save-trigger').hide();
-	$('#share-trigger').hide();
+	$('.mapcontrol').hide();
+	$('.mapshare').hide();
+	$('.map-preloader').show();
 	$('select').material_select();
 
 	if (localStorage.getItem("weather") === null) {
 		// Never opened before
 		localStorage['weather'] = '10001';
-		localStorage['nimbus'] = '1.2';
+		localStorage['nimbus'] = '2.0';
 		$('#welcome').openModal();
-	} else if (localStorage.getItem("nimbus") != "1.2") {
-		localStorage['nimbus'] = '1.2';
+	} else if (localStorage.getItem("nimbus") != "2.0") {
+		localStorage['nimbus'] = '2.0';
 		$('#new').openModal();
 	}
 	
 	if (localStorage.getItem("unit") === null) {
 		localStorage['unit'] = 'f';
 	}
-
-	if (localStorage.getItem("radar-quality") === null) {
-		if (localStorage.getItem("radar") === null) {
-			localStorage['radar-quality'] = '1';
-		} else {
-			localStorage['radar-quality'] = localStorage['radar'];
-		}
-	}
 	
 	if (localStorage.getItem("radar-location") === null) {
 		localStorage['radar-location'] = '';
 	}
 
+	if (localStorage.getItem("radar-player") === null) {
+		localStorage['radar-player'] = 'true';
+	}
+
 	if (localStorage.getItem("color") === null) {
-		localStorage['color'] = '#13A38D';
+		localStorage['color'] = '#3ca2eb';
+	} else if (localStorage.getItem("color") === "#13A38D") {
+		// Change old default color to new default color
+		localStorage['color'] = '#3ca2eb';
 	}
 
 	if (localStorage.getItem("bg") === null) {
@@ -47,12 +46,33 @@ $(document).ready(function(){
 		localStorage['analytics'] = 'true';
 	}
 
+	// Test HTML5 radar map support
+
+	function supportType(type) { 
+		var video = document.createElement('video');
+		if (video.canPlayType(type)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	// Read values of settings from localStorage
 
 	$("#location").val(localStorage['weather']);
 	$("#unit").val(localStorage['unit']);
 	$("#radar-location").val(localStorage['radar-location']);
-	$("#radar-quality").val(localStorage['radar-quality']);
+	if (localStorage.getItem("radar-player") === "true") {
+		$("#radar-player").prop('checked', true);
+	} else {
+		$("#radar-player").prop('checked', false);
+		if (!(supportType('video/webm') || supportType('video/mp4'))) {
+			$("#radar-player").prop('disabled', true);
+			$('#radar-player').parent().parent().click(function() {
+				Materialize.toast('HTML5 not supported!', 3000, 'rounded');
+			});
+		}
+	}
 	$("#color").val(localStorage['color']);
 	$("#bg").val(localStorage['bg']);
 	$("#analytics").prop('checked', JSON.parse(localStorage['analytics']));
@@ -84,14 +104,11 @@ $(document).ready(function(){
 	$(".title").css("color", localStorage['color'], 'important');
 	$(".secondary-content").css("color", localStorage['color'], 'important');
 	
-	// Set hovering buttons color
-
-	$("#settings-trigger").css("background", localStorage['color'], 'important');
-	$("#save-trigger").css("background", localStorage['color'], 'important');
-	$("#share-trigger").css("background", localStorage['color'], 'important');
-
 	// Set buttons color
 
+	$(".settings-save").css("background", localStorage['color'], 'important');
+	$(".mapcontrol").css("background", localStorage['color'], 'important');
+	$(".mapshare").css("background", localStorage['color'], 'important');
 	$(".btn").css("background", localStorage['color'], 'important');
 	$(".btn").css("background", localStorage['color'], 'important');
 
@@ -101,10 +118,8 @@ $(document).ready(function(){
 
 	// Actions on settings button click/tap
 
-	$('#settings-trigger').click(function() {
-		$('#settings-trigger').fadeOut( "slow", function() {});
+	$(document).on('click', ".settings-trigger", function() {
 		$('#settings').fadeIn( "slow", function() {});
-		$('#save-trigger').fadeIn( "slow", function() {});
 	});
 
 	// Social Media links
@@ -138,7 +153,8 @@ $(document).ready(function(){
 		localStorage['unit'] = 'f';
 		localStorage['radar-quality'] = '1';
 		localStorage['radar-location'] = '';
-		localStorage['color'] = '#13A38D';
+		localStorage['radar-player'] = 'true';
+		localStorage['color'] = '#3ca2eb';
 		localStorage['bg'] = '';
 		localStorage['analytics'] = 'true';
 		window.location.replace('index.html');
@@ -146,9 +162,6 @@ $(document).ready(function(){
 	$('.radar-location-item').click(function() {
 		$('#radar-location-modal').openModal();
 		$("#radar-location").select();
-	});
-	$('.radar-quality-item').click(function() {
-		$('#radar-quality-modal').openModal();
 	});
 	$('.hex-item').click(function() {
 		$('#hex-modal').openModal();
@@ -158,7 +171,7 @@ $(document).ready(function(){
 		$('#picker-modal').openModal();
 	});
 	$('.color-reset').click(function() {
-		document.getElementById("color").value = "#13A38D";
+		document.getElementById("color").value = "#3ca2eb";
 		Materialize.toast('Color reset!', 3000, 'rounded');
 	});
 	$('.background-item').click(function() {
@@ -177,12 +190,16 @@ $(document).ready(function(){
 
 	// Actions on save button click/tap
 
-	$('#save-trigger').click(function() {
+	$('.settings-save').click(function() {
 		if (($("#location").val().length > '0') && (($("#radar-location").val().match(/^\d+$/) != null)) || ($("#radar-location").val() === "")) {
 			localStorage['weather'] = $("#location").val();
 			localStorage['unit'] = $("#unit").val();
 			localStorage['radar-location'] = $("#radar-location").val();
-			localStorage['radar-quality'] = $("#radar-quality").val();
+			if ($('#radar-player').is(':checked')) {
+				localStorage['radar-player'] = "true";
+			} else {
+				localStorage['radar-player'] = "false";
+			}
 			localStorage['color'] = $("#color").val();
 			localStorage['bg'] = $("#bg").val();
 			if ($('#analytics').is(':checked')) {
@@ -196,6 +213,64 @@ $(document).ready(function(){
 		}
 	});
 
+	// Determine correct icon
+	// Yahoo Weather API condition codes: https://developer.yahoo.com/weather/documentation.html#codes
+	function getIcon(condition) {
+		var icon = "";
+		if (condition == 0) {
+			icon = "wi-tornado";
+		} else if (condition == 1 || condition == 45) {
+			icon = "wi-storm-showers";
+		} else if (condition == 2) {
+			icon = "wi-lightning";
+		} else if (condition == 3 || condition == 4 || condition == 47) {
+			icon = "wi-thunderstorm";
+		} else if (condition == 5 || condition == 46) {
+			icon = "wi-rain-mix";
+		} else if (condition == 6 || condition == 7 || condition == 13 || condition == 14 || condition == 18 || condition == 36) {
+			icon = "wi-sleet";
+		} else if (condition == 8 || condition == 9 || condition == 10 || condition == 11 || condition == 12) {
+			icon = "wi-showers";
+		} else if (condition == 15 || condition == 41 || condition == 42 || condition == 43) {
+			icon = "wi-snow";
+		} else if (condition == 16) {
+			icon = "wi-snow-wind";
+		} else if (condition == 17) {
+			icon = "wi-hail";
+		} else if (condition == 19) {
+			icon = "wi-dust";
+		} else if (condition == 20) {
+			icon = "wi-fog";
+		} else if (condition == 21) {
+			icon = "wi-day-haze";
+		} else if (condition == 22) {
+			icon = "wi-smoke";
+		} else if (condition == 23 || condition == 24) {
+			icon = "wi-windy";
+		} else if (condition == 25) {
+			icon = "wi-snowflake-cold";
+		} else if (condition == 26) {
+			icon = "wi-cloud";
+		} else if (condition == 27 || condition == 29) {
+			icon = "wi-night-cloudy";
+		} else if (condition == 28 || condition == 30) {
+			icon = "wi-day-cloudy";
+		} else if (condition == 31 || condition == 33 || condition == 44) {
+			icon = "wi-stars";
+		} else if (condition == 32 || condition == 34) {
+			icon = "wi-day-sunny";
+		} else if (condition == 36) {
+			icon = "wi-hot";
+		} else if (condition == 37 || condition == 38 || condition == 39) {
+			icon = "wi-thunderstorm";
+		} else if (condition == 40) {
+			icon = "wi-showers";
+		} else if (condition == 3200) {
+			icon = "wi-alien";
+		}
+		return icon;
+	}
+
 	// Weather
 
 	var country = "";
@@ -205,77 +280,65 @@ $(document).ready(function(){
 	woeid: '',
 	unit: localStorage['unit'],
 	success: function(weather) {
-		now = '<div class="card"><div class="card-content"><span class="card-title">' + weather.city + ', ' + weather.region + '</span><table><tr><th class="weather-icon"><img src="img/' + weather.code + '.png" /></th><th class="weather-info"><h3>' + weather.temp + '&deg;' + weather.units.temp + '</h3><p>' + weather.high + '&deg;' + weather.units.temp + ' / ' + weather.low + '&deg;' + weather.units.temp + '</p></th></tr></table></div></div><div class="card"><div class="card-content"><span class="card-title">Winds</span><p><b>Wind chill:</b> ' + weather.wind.chill + '&deg;' + weather.units.temp + '<p><b>Speed:</b> ' + weather.wind.speed + ' ' + weather.units.speed + ' ' + weather.wind.direction + '</div></div><div class="card"><div class="card-content"><span class="card-title">Daylight</span><p><b>Sunrise:</b> ' + weather.sunrise + '</p><p><b>Sunset:</b> ' + weather.sunset + '</p><p><b>Visibility:</b> ' + weather.visibility + ' ' + weather.units.distance + '</p></div></div><div class="card"><div class="card-content"><div class="row"><button type="submit" name="action" class="btn-flat col s12 m6" id="share-twitter">Share on Twitter<i class="mdi-content-send right"></i></button><button type="submit" name="action" class="btn-flat col s12 m6" id="share-tumblr">Share on Tumblr<i class="mdi-content-send right"></i></button></div></div></div><div class="card"><div class="card-content">Weather info last updated ' + weather.updated + ' from Yahoo Weather.</div></div>';
-		$("#current").append(now);
 
-		forecast = '<div id="forecast-container"><div class="card forecast1"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[0].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[0].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[0].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[0].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[0].text + '</p></th></tr></table></div></div><div class="card forecast2"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[1].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[1].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[1].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[1].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[1].text + '</p></th></tr></table></div></div><div class="card forecast3"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[2].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[2].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[2].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[2].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[2].text + '</p></th></tr></table></div></div><div class="card forecast4"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[3].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[3].code + '.png" /></th><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[3].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[3].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[3].text + '</p></th></tr></table></div></div><div class="card forecast5"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[4].day + '</span><table><tr><th class="forecast-icon"><img src="img/' + weather.forecast[4].code + '.png" /><th class="forecast-info"><p><b>High:</b> ' + weather.forecast[4].high + '&deg;' + weather.units.temp + '</p><b>Low:</b> ' + weather.forecast[4].low + '&deg;' + weather.units.temp + '</p><p>' + weather.forecast[4].text + '</p></th></tr></table></div></div></div>';
+		// Fill content
+		current = '<div class="card"><div class="card-content"><span class="card-title">' + weather.city + ', ' + weather.region + '</span><table><tr><th class="weather-icon"><i class="wi ' + getIcon(weather.code) + '"></i></th><th class="weather-info"><span class="temp">' + weather.temp + '&deg;' + weather.units.temp + '</span><br />' + weather.high + '&deg;' + weather.units.temp + ' / ' + weather.low + '&deg;' + weather.units.temp + '</th></tr></table><div class="weather-updated">Last updated ' + weather.updated + '</div></div></div><div class="card"><div class="card-content"><span class="card-title">Winds</span><p><b>Wind chill:</b> ' + weather.wind.chill + '&deg;' + weather.units.temp + '<p><b>Speed:</b> ' + weather.wind.speed + ' ' + weather.units.speed + ' ' + weather.wind.direction + '</div></div><div class="card"><div class="card-content"><span class="card-title">Daylight</span><p><b>Sunrise:</b> ' + weather.sunrise + '</p><p><b>Sunset:</b> ' + weather.sunset + '</p><p><b>Visibility:</b> ' + weather.visibility + ' ' + weather.units.distance + '</p></div></div><div class="card"><div class="card-content"><div class="row"><button type="submit" name="action" class="btn-flat col s12 m6" id="share-twitter">Share on Twitter<i class="mdi-content-send right"></i></button><button type="submit" name="action" class="btn-flat col s12 m6" id="share-tumblr">Share on Tumblr<i class="mdi-content-send right"></i></button></div></div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>';
+		$("#current").append(current);
+		forecast = '<div id="forecast-container"><div class="card forecast1"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[0].day + '</span><table><tr><th class="forecast-icon"><i class="wi ' + getIcon(weather.forecast[0].code) + '"></i></th><th class="forecast-info"><span class="temp">' + weather.forecast[0].high + '&deg;' + weather.units.temp + ' / ' + weather.forecast[0].low + '&deg;' + weather.units.temp + '</span><br />' + weather.forecast[0].text + '</th></tr></table></div></div><div class="card forecast2"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[1].day + '</span><table><tr><th class="forecast-icon"><i class="wi ' + getIcon(weather.forecast[1].code) + '"></i></th><th class="forecast-info"><span class="temp">' + weather.forecast[1].high + '&deg;' + weather.units.temp + ' / ' + weather.forecast[1].low + '&deg;' + weather.units.temp + '</span><br />' + weather.forecast[1].text + '</th></tr></table></div></div><div class="card forecast3"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[2].day + '</span><table><tr><th class="forecast-icon"><i class="wi ' + getIcon(weather.forecast[2].code) + '"></i></th><th class="forecast-info"><span class="temp">' + weather.forecast[2].high + '&deg;' + weather.units.temp + ' / ' + weather.forecast[2].low + '&deg;' + weather.units.temp + '</span><br />' + weather.forecast[2].text + '</th></tr></table></div></div><div class="card forecast4"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[3].day + '</span><table><tr><th class="forecast-icon"><i class="wi ' + getIcon(weather.forecast[3].code) + '"></i></th><th class="forecast-info"><span class="temp">' + weather.forecast[3].high + '&deg;' + weather.units.temp + ' / ' + weather.forecast[3].low + '&deg;' + weather.units.temp + '</span><br />' + weather.forecast[3].text + '</th></tr></table></div></div><div class="card forecast5"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[4].day + '</span><table><tr><th class="forecast-icon"><i class="wi ' + getIcon(weather.forecast[4].code) + '"></i></th><th class="forecast-info"><span class="temp">' + weather.forecast[4].high + '&deg;' + weather.units.temp + ' / ' + weather.forecast[4].low + '&deg;' + weather.units.temp + '</span><br />' + weather.forecast[4].text + '</th></tr></table></div></div></div>';
 		$("#forecast").append(forecast);
-		
+
+		// Share buttons
 		var socialmessage = "It's currently " + weather.temp + "°" + weather.units.temp + " and " + weather.currently + " in " + weather.city + " right now!";
-		
 		$('#share-twitter').click(function() {
 			window.open("https://twitter.com/intent/tweet?via=NimbusWeather&text=" + encodeURIComponent(socialmessage), "Twitter", "width=500,height=300,scrollbars=0");
 		});
-
 		$('#share-tumblr').click(function() {
 			window.open("https://www.tumblr.com/share?s=&v=3&t=" + encodeURIComponent(socialmessage), "Tumblr", "width=500,height=300,scrollbars=0");
-		});
-		
+		});	
+
 		// Radar Map
+
 		if (weather.country === "United States") {
 			if (localStorage.getItem("radar-location") !== "") {
-				var loaded = "false";
-		  
-				var width = ($("#map").width() * localStorage["radar-quality"]);
-				var height = ($("#map").height() * localStorage["radar-quality"]);
 				var radarmap = "http://www.tephigram.weather.net/cgi-bin/razradar.cgi?zipcode=" + localStorage["radar-location"];
-				$("#map").css("background", "url(" + radarmap + "&width=" + width + "&height=" + height + ") #000000 bottom center no-repeat");
-		  
-				$('.forecast-trigger').click(function() {
-					$('#share-trigger').hide();
-					$('#settings-trigger').show();
-				});
-		  
-				$('.current-trigger').click(function() {
-					$('#share-trigger').hide();
-					$('#settings-trigger').show();
-				});
-		  
-				$('.map-trigger').click(function() {
-					$('#settings-trigger').hide();
-					$('#share-trigger').show();
-				});
-		  
-				$('#share-trigger').click(function() {
-					$('#share').openModal();
-					if (loaded === "false") {
-						$.ajax({ 
-							url: 'https://api.imgur.com/3/image',
-							headers: {
-								'Authorization': 'Client-ID bb3c3cd294bba78'
-							},
-							type: 'POST',
-							data: {
-								'image': radarmap + '&width=480&height=360'
-							},
-							dataType: 'json',
-							success: function(response) {
-								if(response.success) {
-									$('.share-content').html('This is a direct image link to the current radar map.<div class="input-field col s12"><input id="share-url" type="text" value="' + response.data.link + '"></div>');
-									$('.share-footer').append('<a href="' + response.data.link + '" target="_blank" class="waves-effect btn-flat">Open Image</a>');
-									$("#share-url").select();
-									loaded = "true";
+				if ((localStorage.getItem("radar-player") === "true") && (supportType('video/webm') || supportType('video/mp4'))) {
+					$('.forecast-trigger').click(function() { $('.mapcontrol').hide(); $('.mapshare').hide(); });
+					$('.current-trigger').click(function() { $('.mapcontrol').hide(); $('.mapshare').hide(); });
+					$('.map-trigger').click(function() { $('.mapcontrol').show(); $('.mapshare').show(); });
+					var gfycat = "http://upload.gfycat.com/transcode?fetchUrl=" + encodeURIComponent(radarmap + "&width=" + $("#map").width() + "&height=" + $("#map").height() + ".gif");
+					$.getJSON(gfycat, function(data) {
+						console.log(data);
+						if (data.error != null) {
+							$('#map').html('<div class="card"><div class="card-content"><span class="card-title">Gfycat API Error</span><p>Gfycat was unable to load the radar map, and reported this error:</p><p class="error">' + data.error + '</p><p>You can try reopening Nimbus, or switching "New radar player" to off in the settings.</div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>');
+						} else {
+							$('.map-preloader').fadeOut( "slow", function() {});
+							$("#map").html('<video id="mapvideo" muted="true" loop="true"><source src="http://zippy.gfycat.com/' + data.gfyName + '.webm" type="video/webm"><source src="http://zippy.gfycat.com/' + data.gfyName + '.mp4" type="video/mp4"></video>');
+							var mapvideo = document.getElementById("mapvideo");
+							$(".mapcontrol").html('<i class="mdi-av-play-arrow"></i>');
+							$('.mapshare').click(function() {
+								$('#shareurl').attr('value', 'http://gfycat.com/' + data.gfyName);
+								$('.sharelink').attr('href', 'http://gfycat.com/' + data.gfyName);
+								$('#share-modal').openModal();
+								$('#shareurl').select();
+							});
+							$('.mapcontrol').click(function() {
+								if (mapvideo.paused) {
+									$(".mapcontrol").html('<i class="mdi-av-pause"></i>');
+									mapvideo.play();
+								} else {
+									$(".mapcontrol").html('<i class="mdi-av-play-arrow"></i>');
+									mapvideo.pause();
 								}
-							},
-							error: function(xhr, status, error) {
-								$('.share-content').html('<b>Imgur error:</b><br/>' + xhr.responseText);
-							}
-						});
-					}
-					$("#share-url").select();
-				});
+							});
+						}
+					});
+				} else {
+					$('.map-preloader').hide();
+					$("#map").css("background", "url(" + radarmap + "&width=" + $("#map").width() + "&height=" + $("#map").height() + ") #000000 bottom center no-repeat");
+				}
+		  
 			} else {
-				$('#map').html('<div class="card"><div class="card-content"><span class="card-title">Map not configured</span><p>Due to an API limitation, you need to configure the location for the radar map seperately. Go to the settings and set a radar location.</p></div></div>');
+				$('#map').html('<div class="card"><div class="card-content"><span class="card-title">Map not configured</span><p>Due to an API limitation, you need to configure the location for the radar map seperately. Go to the settings and set a radar location.</p></div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>');
 			}
 		} else {
 			$('#map').html('<div class="card"><div class="card-content"><span class="card-title">Map unavailable</span><p>Due to an API limitation, radar maps are not available for locations outside the United States. This is being worked on, and may be available in a future update.</p></div></div>');
@@ -283,7 +346,9 @@ $(document).ready(function(){
 
 	},
 	error: function(error) {
-		$("#current").append('<div class="card"><div class="card-content"><span class="card-title">Error</span><p>There was an error loading the weather.</p></div></div>');
+		$("#current").html('<div class="card"><div class="card-content"><span class="card-title">Error</span><p>There was an error loading the weather.</p></div><div class="card-action"><a href="javascript:window.location.replace(' + index + ');">Try again</a></div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>');
+		$("#forecast").html('<div class="card"><div class="card-content"><span class="card-title">Error</span><p>There was an error loading the forecast.</p></div><div class="card-action"><a href="javascript:window.location.replace(' + index + ');">Try again</a></div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>');
+		$("#map").html('<div class="card"><div class="card-content"><span class="card-title">Error</span><p>There was an error loading the radar map.</p></div><div class="card-action"><a href="javascript:window.location.replace(' + index + ');">Try again</a></div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>');
 	}
 	});
 	
@@ -292,7 +357,7 @@ $(document).ready(function(){
 // Display everything
 
 $(window).load(function(){
-	$('.preloader-wrapper').fadeOut( "slow", function() {});
+	$('.nimbus-preloader').fadeOut( "slow", function() {});
 	$('#current').fadeIn( "slow", function() {});
 	$('#settings-trigger').fadeIn( "slow", function() {});
 	$('#colorpicker').farbtastic('#color');

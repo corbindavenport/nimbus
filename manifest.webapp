@@ -1,5 +1,6 @@
 {
 	"name": "Nimbus",
+	"version": "2.0",
 	"description": "Nimbus is a simple and powerful weather app.",
 	"launch_path": "/index.html",
 	"icons": {
