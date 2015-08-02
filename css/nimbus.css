@@ -94,6 +94,10 @@ body {
 	min-width: 260px;
 }
 
+.content .card {
+	margin: 10px auto 20px auto;
+}
+
 .btn-floating {
 	background: transparent;
 }
@@ -106,17 +110,7 @@ body {
 	background-color: #FFFFFF !important;
 }
 
-#share-trigger {
-	position: absolute;
-	right: 16px;
-	bottom: 16px;
-	margin-bottom: 0px !important;
-	-webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12) !important;
-	-moz-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12) !important;
-	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12) !important;
-}
-
-.preloader-wrapper {
+.preloader-wrapper, .map-preloader {
 	position:absolute;
 	width:300px;
 	height:200px;
@@ -127,6 +121,10 @@ body {
 	z-index: 0;
 }
 
+.map-preloader {
+	display: none;
+}
+
 #settings .help {
 	display: none;
 }
@@ -135,14 +133,42 @@ body {
 	background-size: cover !important;
 }
 
+#mapvideo {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	min-width: 100%;
+	min-height: 100%;
+	width: auto;
+	height: auto;
+	z-index: -100;
+	-webkit-transform: translateX(-50%) translateY(-50%);
+	transform: translateX(-50%) translateY(-50%);
+}
+
+.mapcontrol, .mapshare {
+	position: fixed;
+	display: none;
+	margin-bottom: 0px !important;
+	-webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12) !important;
+	-moz-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12) !important;
+	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12) !important;
+}
+
+.mapcontrol {
+	right: 16px;
+	bottom: 16px;
+}
+
+.mapshare {
+	right: 16px;
+	bottom: 87.5px;
+}
+
 .collapsible, .theme {
 	margin: 0px !important;
 	border: 0px !important;
 	box-shadow: none !important;
-}
-
-#settings .card, .content .card {
-	margin: 10 0 20 0;
 }
 
 .card-title {
@@ -163,8 +189,8 @@ body {
 }
 
 table {
-	margin-top: 30px;
-	margin-bottom: 30px;
+	margin-top: 20px;
+	margin-bottom: 20px;
 }
 
 td, th {
@@ -227,12 +253,20 @@ td, th {
 	margin-bottom: 0px !important;
 }
 
+.card .card-content p {
+	margin: 0px 0px 5px;
+}
+
 form label {
 	margin-right: 5px;
 }
 
 input[type=text], input[type=password], input[type=email], input[type=url], input[type=date], input[type=tel], input[type=number], input[type=search], textarea.materialize-textarea {
 	margin: 0px;
+}
+
+.error {
+	font-family: "Courier New", Courier, monospace;
 }
 
 /* Styles for Settings */
@@ -245,7 +279,7 @@ input[type=text], input[type=password], input[type=email], input[type=url], inpu
 	bottom: 0px;
 	overflow: auto;
 	background: #EEEEEE;
-	z-index: 3;
+	z-index: 10;
 	min-width: 260px;
 	display: none;
 }

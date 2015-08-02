@@ -1,4 +1,4 @@
-<html>
+<!DOCTYPE html>
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
@@ -32,7 +32,7 @@
 	<meta name="theme-color" content="#3ca2eb">
 	<meta property="og:title" content="Nimbus Weather" />
 	<meta property="og:image" content="icon128.png" />
-	<meta property="og:description" content="Simple and powerful weather app for Android, Firefox, and Chrome." />
+	<meta property="og:description" content="Nimbus is a simple multi-platform weather app." />
 </head>
 <body>
 
@@ -69,7 +69,7 @@
 <div id="units-modal" class="modal">
 	<div class="modal-content">
 		<b>Imperial (American) and Metric units are supported.</b>
-		<select id="unit"><option value="f">Imperial</option><option value="c">Metric</option></select></p>
+		<select id="unit"><option value="f">Imperial</option><option value="c">Metric</option></select>
 	</div>
 	<div class="modal-footer share-footer">
 		<a class="waves-effect btn-flat modal-close">Select</a>
@@ -88,18 +88,8 @@
 
 <div id="radar-location-modal" class="modal">
 	<div class="modal-content">
-	  <b>Only United States ZIP codes are supported.</b>
+		<b>Only United States ZIP codes are supported.</b>
 		<div class="input-field"><input id="radar-location" placeholder="US ZIP Code" type="text"></div>
-	</div>
-	<div class="modal-footer share-footer">
-		<a class="waves-effect btn-flat modal-close">Select</a>
-	</div>
-</div>
-
-<div id="radar-quality-modal" class="modal">
-	<div class="modal-content">
-		<b>If you want to reduce data usage (or decrease loading times), you can reduce the quality of the radar image. This will not affect the quality of shared maps.</b>
-		<select id="radar-quality"><option value="1">100%</option><option value="0.75">75%</option><option value="0.50">50%</option><option value="0.25">25%</option></select>
 	</div>
 	<div class="modal-footer share-footer">
 		<a class="waves-effect btn-flat modal-close">Select</a>
@@ -140,6 +130,7 @@
 		<h4>What's new</h4>
 		<p>Nimbus 2.0 includes new features and improvements to make it better than ever. Here's some of the improvements in this update.</p>
 		<p><u>New icon</u>: Nimbus has a shiny new icon!</p>
+		<p><u>Improved radar</u>: Nimbus now uses an HTML5 radar map player, powered by Gfycat. The old radar can be re-enabled in settings.</p>
 		<p><u>New forecast layout</u>: The forecast screen has been updated with a cleaner layout.</p>
 		<p><u>New weather icons</u>: Nimbus now uses <a href="http://erikflowers.github.io/weather-icons/" target="_blank">Weather Icons by Erik Flowers</a> instead of Google Now-style icons.</p>
 		<p><u>Moved settings button</u>: The settings button no longer hovers on the screen. It is now located at the bottom of the Current tab.</p>
@@ -152,8 +143,8 @@
 
 <div id="welcome" class="modal">
 	<div class="modal-content">
-		<p>Welcome to Nimbus, a simple (but powerful) weather app.</p>
-		<p>Your location is currently set to New York. You can change your location by tapping the Settings button on the lower right corner.</p>
+		<p>Welcome to Nimbus, a simple multi-platform weather app.</p>
+		<p>Your location is currently set to New York. You can change your location by tapping the Settings button at the bottom of the 'Current' tab.</p>
 	</div>
 	<div class="modal-footer">
 		<a class="waves-effect btn-flat modal-close">Close</a>
@@ -193,6 +184,18 @@
 	</div>
 </div>
 
+<div id="share-modal" class="modal">
+	<div class="modal-content">
+		<b>This is a mirror to the current radar map.</b>
+		<div class="input-field col s12">
+          <input id="shareurl" type="text" value="Loading...">
+        </div>
+	</div>
+	<div class="modal-footer share-footer">
+		<a class="waves-effect btn-flat modal-close">Close</a><a href="#" target="_blank" class="waves-effect btn-flat sharelink">Open Link</a>
+	</div>
+</div>
+
 <div id="tabs">
 	<ul class="tabs">
 		<li class="tab col s3 forecast-trigger"><a href="#forecast" class="theme">Forecast</a></li>
@@ -210,7 +213,7 @@
 		<li class="settings-item reset-item">Reset all settings</li>
 		<li class="settings-item title"><b>Radar</b></li>
 		<li class="settings-item radar-location-item">Location</li>
-		<li class="settings-item radar-quality-item">Radar quality</li>
+		<li class="settings-item"><div>New radar player<a href="#!" class="secondary-content"><div class="switch"><label>Off<input type="checkbox" id="radar-player"><span class="lever"></span>On</label></div></a></div></li>
 		<li class="settings-item title"><b>Theme</b></li>
 		<li class="settings-item hex-item">Pick color from Hex Code</li>
 		<li class="settings-item picker-item">Pick color from Color Picker</li>
@@ -220,7 +223,7 @@
 		<li class="settings-item"><div>Analytics<a href="#!" class="secondary-content"><div class="switch"><label>Off<input type="checkbox" id="analytics"><span class="lever"></span>On</label></div></a></div></li>
 		<li class="settings-item privacy">Privacy Policy</li>
 		<li class="settings-item title"><b>About Nimbus 2.0</b></li>
-		<li class="settings-item">Nimbus is developed by Corbin Davenport and licensed under the GPLv3 license. It includes components from <a href="http://jquery.com/" class="title" target="_blank">jQuery</a>, <a href="http://materializecss.com/" class="title" target="_blank">Materialize</a>, <a href="http://simpleweatherjs.com/" class="title" target="_blank">SimpleWeather</a>, <a href="http://acko.net/blog/farbtastic-jquery-color-picker-plug-in/" class="title" target="_blank">Farbastic</a>, and <a href="http://erikflowers.github.io/weather-icons/" class="title" target="_blank">Weather Icons</a>.</li>
+		<li class="settings-item">Nimbus is developed by Corbin Davenport and licensed under the GPLv3 license. It uses components of <a href="http://jquery.com/" class="title" target="_blank">jQuery</a>, <a href="http://materializecss.com/" class="title" target="_blank">Materialize</a>, <a href="http://simpleweatherjs.com/" class="title" target="_blank">SimpleWeather</a>, <a href="http://acko.net/blog/farbtastic-jquery-color-picker-plug-in/" class="title" target="_blank">Farbastic</a>, <a href="http://gfycat.com/api" class="title" target="_blank">Gfycat API</a>, and <a href="http://erikflowers.github.io/weather-icons/" class="title" target="_blank">Weather Icons</a>.</li>
 		<li class="settings-item twitterlink">Nimbus on Twitter<a class="secondary-content"><i class="mdi-content-send"></i></a></li>
 		<li class="settings-item googlelink">Nimbus on Google+<a class="secondary-content"><i class="mdi-content-send"></i></a></li>
 		<li class="settings-item githublink">Nimbus on GitHub<a class="secondary-content"><i class="mdi-content-send"></i></a></li>
@@ -235,9 +238,9 @@
 
 <div id="current" class="content"></div>
 
-<div id="map" class="content"></div>
+<div id="map" class="content"><div class="map-preloader preloader-wrapper big active"><div class="spinner-layer spinner-blue"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div><div class="spinner-layer spinner-red"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div><div class="spinner-layer spinner-yellow"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div><div class="spinner-layer spinner-green"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>
 
-<div class="preloader-wrapper big active">
+<div class="nimbus-preloader preloader-wrapper big active">
 	<div class="spinner-layer spinner-blue">
 	<div class="circle-clipper left">
 	<div class="circle"></div>
@@ -278,6 +281,10 @@
 	</div>
 	</div>
 </div>
+
+<a class="btn-floating btn-large waves-effect waves-light mapcontrol"><i class="mdi-hardware-keyboard-control"></i></a>
+
+<a class="btn-floating btn-large waves-effect waves-light mapshare"><i class="mdi-social-share"></i></a>
 
 <script type="text/javascript" src="js/nimbus.min.js"></script>
 

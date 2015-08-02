@@ -4,6 +4,9 @@ $(document).ready(function(){
 
 	$('ul.tabs').tabs();
 	$('#current').hide();
+	$('.mapcontrol').hide();
+	$('.mapshare').hide();
+	$('.map-preloader').show();
 	$('select').material_select();
 
 	if (localStorage.getItem("weather") === null) {
@@ -12,24 +15,20 @@ $(document).ready(function(){
 		localStorage['nimbus'] = '2.0';
 		$('#welcome').openModal();
 	} else if (localStorage.getItem("nimbus") != "2.0") {
-		//localStorage['nimbus'] = '1.3';
+		localStorage['nimbus'] = '2.0';
 		$('#new').openModal();
 	}
 	
 	if (localStorage.getItem("unit") === null) {
 		localStorage['unit'] = 'f';
 	}
-
-	if (localStorage.getItem("radar-quality") === null) {
-		if (localStorage.getItem("radar") === null) {
-			localStorage['radar-quality'] = '1';
-		} else {
-			localStorage['radar-quality'] = localStorage['radar'];
-		}
-	}
 	
 	if (localStorage.getItem("radar-location") === null) {
 		localStorage['radar-location'] = '';
+	}
+
+	if (localStorage.getItem("radar-player") === null) {
+		localStorage['radar-player'] = 'true';
 	}
 
 	if (localStorage.getItem("color") === null) {
@@ -47,12 +46,33 @@ $(document).ready(function(){
 		localStorage['analytics'] = 'true';
 	}
 
+	// Test HTML5 radar map support
+
+	function supportType(type) { 
+		var video = document.createElement('video');
+		if (video.canPlayType(type)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	// Read values of settings from localStorage
 
 	$("#location").val(localStorage['weather']);
 	$("#unit").val(localStorage['unit']);
 	$("#radar-location").val(localStorage['radar-location']);
-	$("#radar-quality").val(localStorage['radar-quality']);
+	if (localStorage.getItem("radar-player") === "true") {
+		$("#radar-player").prop('checked', true);
+	} else {
+		$("#radar-player").prop('checked', false);
+		if (!(supportType('video/webm') || supportType('video/mp4'))) {
+			$("#radar-player").prop('disabled', true);
+			$('#radar-player').parent().parent().click(function() {
+				Materialize.toast('HTML5 not supported!', 3000, 'rounded');
+			});
+		}
+	}
 	$("#color").val(localStorage['color']);
 	$("#bg").val(localStorage['bg']);
 	$("#analytics").prop('checked', JSON.parse(localStorage['analytics']));
@@ -87,6 +107,8 @@ $(document).ready(function(){
 	// Set buttons color
 
 	$(".settings-save").css("background", localStorage['color'], 'important');
+	$(".mapcontrol").css("background", localStorage['color'], 'important');
+	$(".mapshare").css("background", localStorage['color'], 'important');
 	$(".btn").css("background", localStorage['color'], 'important');
 	$(".btn").css("background", localStorage['color'], 'important');
 
@@ -131,6 +153,7 @@ $(document).ready(function(){
 		localStorage['unit'] = 'f';
 		localStorage['radar-quality'] = '1';
 		localStorage['radar-location'] = '';
+		localStorage['radar-player'] = 'true';
 		localStorage['color'] = '#3ca2eb';
 		localStorage['bg'] = '';
 		localStorage['analytics'] = 'true';
@@ -139,9 +162,6 @@ $(document).ready(function(){
 	$('.radar-location-item').click(function() {
 		$('#radar-location-modal').openModal();
 		$("#radar-location").select();
-	});
-	$('.radar-quality-item').click(function() {
-		$('#radar-quality-modal').openModal();
 	});
 	$('.hex-item').click(function() {
 		$('#hex-modal').openModal();
@@ -175,7 +195,11 @@ $(document).ready(function(){
 			localStorage['weather'] = $("#location").val();
 			localStorage['unit'] = $("#unit").val();
 			localStorage['radar-location'] = $("#radar-location").val();
-			localStorage['radar-quality'] = $("#radar-quality").val();
+			if ($('#radar-player').is(':checked')) {
+				localStorage['radar-player'] = "true";
+			} else {
+				localStorage['radar-player'] = "false";
+			}
 			localStorage['color'] = $("#color").val();
 			localStorage['bg'] = $("#bg").val();
 			if ($('#analytics').is(':checked')) {
@@ -270,20 +294,51 @@ $(document).ready(function(){
 		});
 		$('#share-tumblr').click(function() {
 			window.open("https://www.tumblr.com/share?s=&v=3&t=" + encodeURIComponent(socialmessage), "Tumblr", "width=500,height=300,scrollbars=0");
-		});
-		
+		});	
+
 		// Radar Map
+
 		if (weather.country === "United States") {
 			if (localStorage.getItem("radar-location") !== "") {
-				var loaded = "false";
-		  
-				var width = ($("#map").width() * localStorage["radar-quality"]);
-				var height = ($("#map").height() * localStorage["radar-quality"]);
 				var radarmap = "http://www.tephigram.weather.net/cgi-bin/razradar.cgi?zipcode=" + localStorage["radar-location"];
-				$("#map").css("background", "url(" + radarmap + "&width=" + width + "&height=" + height + ") #000000 bottom center no-repeat");
+				if ((localStorage.getItem("radar-player") === "true") && (supportType('video/webm') || supportType('video/mp4'))) {
+					$('.forecast-trigger').click(function() { $('.mapcontrol').hide(); $('.mapshare').hide(); });
+					$('.current-trigger').click(function() { $('.mapcontrol').hide(); $('.mapshare').hide(); });
+					$('.map-trigger').click(function() { $('.mapcontrol').show(); $('.mapshare').show(); });
+					var gfycat = "http://upload.gfycat.com/transcode?fetchUrl=" + encodeURIComponent(radarmap + "&width=" + $("#map").width() + "&height=" + $("#map").height() + ".gif");
+					$.getJSON(gfycat, function(data) {
+						console.log(data);
+						if (data.error != null) {
+							$('#map').html('<div class="card"><div class="card-content"><span class="card-title">Gfycat API Error</span><p>Gfycat was unable to load the radar map, and reported this error:</p><p class="error">' + data.error + '</p><p>You can try reopening Nimbus, or switching "New radar player" to off in the settings.</div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>');
+						} else {
+							$('.map-preloader').fadeOut( "slow", function() {});
+							$("#map").html('<video id="mapvideo" muted="true" loop="true"><source src="http://zippy.gfycat.com/' + data.gfyName + '.webm" type="video/webm"><source src="http://zippy.gfycat.com/' + data.gfyName + '.mp4" type="video/mp4"></video>');
+							var mapvideo = document.getElementById("mapvideo");
+							$(".mapcontrol").html('<i class="mdi-av-play-arrow"></i>');
+							$('.mapshare').click(function() {
+								$('#shareurl').attr('value', 'http://gfycat.com/' + data.gfyName);
+								$('.sharelink').attr('href', 'http://gfycat.com/' + data.gfyName);
+								$('#share-modal').openModal();
+								$('#shareurl').select();
+							});
+							$('.mapcontrol').click(function() {
+								if (mapvideo.paused) {
+									$(".mapcontrol").html('<i class="mdi-av-pause"></i>');
+									mapvideo.play();
+								} else {
+									$(".mapcontrol").html('<i class="mdi-av-play-arrow"></i>');
+									mapvideo.pause();
+								}
+							});
+						}
+					});
+				} else {
+					$('.map-preloader').hide();
+					$("#map").css("background", "url(" + radarmap + "&width=" + $("#map").width() + "&height=" + $("#map").height() + ") #000000 bottom center no-repeat");
+				}
 		  
 			} else {
-				$('#map').html('<div class="card"><div class="card-content"><span class="card-title">Map not configured</span><p>Due to an API limitation, you need to configure the location for the radar map seperately. Go to the settings and set a radar location.</p></div></div>');
+				$('#map').html('<div class="card"><div class="card-content"><span class="card-title">Map not configured</span><p>Due to an API limitation, you need to configure the location for the radar map seperately. Go to the settings and set a radar location.</p></div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>');
 			}
 		} else {
 			$('#map').html('<div class="card"><div class="card-content"><span class="card-title">Map unavailable</span><p>Due to an API limitation, radar maps are not available for locations outside the United States. This is being worked on, and may be available in a future update.</p></div></div>');
@@ -302,7 +357,7 @@ $(document).ready(function(){
 // Display everything
 
 $(window).load(function(){
-	$('.preloader-wrapper').fadeOut( "slow", function() {});
+	$('.nimbus-preloader').fadeOut( "slow", function() {});
 	$('#current').fadeIn( "slow", function() {});
 	$('#settings-trigger').fadeIn( "slow", function() {});
 	$('#colorpicker').farbtastic('#color');
