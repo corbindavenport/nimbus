@@ -18,6 +18,10 @@ Nimbus is open source under the GPLv3 license. Nimbus is available on Windows 7 
 
 ---------------------------------------------------------
 
+__New in Nimbus 2.1:__
+* **Updated radar player**: The new radar map player introduced in 2.0 has been updated to fix loading and playback problems. The old player has also recieved improvements and minor fixes.
+* **Faster loading**: Nimbus 2.1 uses asynchronous loading to enhance performance, especially when using the old radar player.
+
 __New in Nimbus 2.0:__
 * **New icon**: Nimbus has a shiny new icon!
 * **Improved radar**: Nimbus now uses an HTML5 radar map player, powered by [Gfycat](http://www.gfycat.com). The old radar can be re-enabled in settings.

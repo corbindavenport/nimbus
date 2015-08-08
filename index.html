@@ -8,7 +8,7 @@
 	<script type="text/javascript" src="js/farbtastic.min.js"></script>
 	<link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection"/>
 	<link type="text/css" rel="stylesheet" href="css/ol.css" media="screen,projection"/>
-	<link type="text/css" rel="stylesheet" href="css/nimbus.min.css" media="screen,projection"/>
+	<link type="text/css" rel="stylesheet" href="css/nimbus.css" media="screen,projection"/>
 	<link type="text/css" rel="stylesheet" href="css/weather-icons.min.css" media="screen,projection"/>
 	<title>Nimbus</title>
 	<link rel="apple-touch-icon" sizes="57x57" href="img/apple-touch-icon-57x57.png">
@@ -128,12 +128,9 @@
 <div id="new" class="modal modal-fixed-footer">
 	<div class="modal-content">
 		<h4>What's new</h4>
-		<p>Nimbus 2.0 includes new features and improvements to make it better than ever. Here's some of the improvements in this update.</p>
-		<p><u>New icon</u>: Nimbus has a shiny new icon!</p>
-		<p><u>Improved radar</u>: Nimbus now uses an HTML5 radar map player, powered by Gfycat. The old radar can be re-enabled in settings.</p>
-		<p><u>New forecast layout</u>: The forecast screen has been updated with a cleaner layout.</p>
-		<p><u>New weather icons</u>: Nimbus now uses <a href="http://erikflowers.github.io/weather-icons/" target="_blank">Weather Icons by Erik Flowers</a> instead of Google Now-style icons.</p>
-		<p><u>Moved settings button</u>: The settings button no longer hovers on the screen. It is now located at the bottom of the Current tab.</p>
+		<p>Nimbus 2.1 includes some minor improvements to make it better than ever. Here's some of the improvements in this update.</p>
+		<p><u>Updated radar player</u>: The new radar map player introduced in 2.0 has been updated to fix loading and playback problems. The old player has also recieved improvements and minor fixes.</p>
+		<p><u>Faster loading</u>: Nimbus 2.1 uses asynchronous loading to enhance performance, especially when using the old radar player.</p>
 		<p><i>And lots of bug fixes and small improvements!</i></p>
 	</div>
 	<div class="modal-footer">
@@ -214,6 +211,9 @@
 		<li class="settings-item title"><b>Radar</b></li>
 		<li class="settings-item radar-location-item">Location</li>
 		<li class="settings-item"><div>New radar player<a href="#!" class="secondary-content"><div class="switch"><label>Off<input type="checkbox" id="radar-player"><span class="lever"></span>On</label></div></a></div></li>
+		<li class="settings-item title"><b>Dark mode</b></li>
+		<li class="settings-item"><div>Dark mode<a href="#!" class="secondary-content"><div class="switch"><label>Off<input type="checkbox" id="darkmode"><span class="lever"></span>On</label></div></a></div></li>
+		<li class="settings-item"><div>Dark mode shortcut<a href="#!" class="secondary-content"><div class="switch"><label>Off<input type="checkbox" id="darkmode-shortcut"><span class="lever"></span>On</label></div></a></div></li>
 		<li class="settings-item title"><b>Theme</b></li>
 		<li class="settings-item hex-item">Pick color from Hex Code</li>
 		<li class="settings-item picker-item">Pick color from Color Picker</li>
@@ -286,7 +286,7 @@
 
 <a class="btn-floating btn-large waves-effect waves-light mapshare"><i class="mdi-social-share"></i></a>
 
-<script type="text/javascript" src="js/nimbus.min.js"></script>
+<script type="text/javascript" src="js/nimbus.js"></script>
 
 </body>
 </html>
