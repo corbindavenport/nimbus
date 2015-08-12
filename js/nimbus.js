@@ -14,7 +14,7 @@ $(document).ready(function(){
 		localStorage['weather'] = '10001';
 		localStorage['nimbus'] = '2.1';
 		$('#welcome').openModal();
-	} else if (localStorage.getItem("nimbus") != "2.0") {
+	} else if (localStorage.getItem("nimbus") != "2.1") {
 		localStorage['nimbus'] = '2.1';
 		$('#new').openModal();
 	}
@@ -305,10 +305,12 @@ $(document).ready(function(){
 					$('.forecast-trigger').click(function() { $('.mapcontrol').hide(); $('.mapshare').hide(); });
 					$('.current-trigger').click(function() { $('.mapcontrol').hide(); $('.mapshare').hide(); });
 					$('.map-trigger').click(function() { $('.mapcontrol').show(); $('.mapshare').show(); });
-					var gfycat = "http://upload.gfycat.com/transcode?fetchUrl=" + encodeURIComponent(radarmap + "&width=" + $("#map").width() + "&height=" + $("#map").height() + ".gif");
+					// Generate string of date/time and add it to URL to avoid Gfy caching
+					var currentdate = new Date();
+					// Generate Gyfcat URL
+					var gfycat = "http://upload.gfycat.com/transcode?fetchUrl=" + encodeURIComponent(radarmap + "&width=" + $("#map").width() + "&height=" + $("#map").height() + ".gif" + "&time=" + currentdate.getMonth() + currentdate.getDate() + currentdate.getFullYear() + currentdate.getHours());
 					$('#map').prepend('<div class="toast map-toast">Requesting map...</div>');
 					$.getJSON(gfycat, function(data) {
-						console.log(data);
 						if (data.error != null) {
 							$('.map-toast').fadeOut("slow", function() {});
 							$('#map').append('<div class="card"><div class="card-content"><span class="card-title">Gfycat API Error</span><p>Gfycat was unable to load the radar map, and reported this error:</p><p class="error">' + data.error + '</p><p>You can try reopening Nimbus, or switching "New radar player" to off in the settings.</div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>');
