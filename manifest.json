@@ -1,7 +1,7 @@
 {
 	"name": "Nimbus",
 	"description": "Nimbus is a simple and powerful weather app for Android, Firefox, and Chrome.",
-	"version": "2.0",
+	"version": "2.1",
 	"minimum_chrome_version": "25",
 	"manifest_version": 2,
 	"permissions": [

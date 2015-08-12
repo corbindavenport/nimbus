@@ -39,8 +39,25 @@ body {
 	padding-bottom: 0px !important;
 }
 
-#toast-container {
-	padding: 10px;
+.toast {
+	white-space: nowrap !important;
+	overflow: hidden !important;
+}
+
+@media all and (max-width: 600px) {
+	#toast-container {
+		margin-bottom: 16px;
+		min-width: calc(100% - 20px) !important;
+	}
+
+	.map-toast {
+		min-width: 100% !important;
+		margin-top: 0px !important;
+		position: absolute !important;
+		left: 0px !important;
+		right: 0px !important;
+		top: 0px !important;
+	}
 }
 
 #tabs {
@@ -110,6 +127,10 @@ body {
 	background-color: #FFFFFF !important;
 }
 
+.modal-content {
+	padding-bottom: 0px !important;
+}
+
 .preloader-wrapper, .map-preloader {
 	position:absolute;
 	width:300px;
@@ -133,7 +154,7 @@ body {
 	background-size: cover !important;
 }
 
-#mapvideo {
+#mapvideo, #mapgif {
 	position: fixed;
 	top: 50%;
 	left: 50%;

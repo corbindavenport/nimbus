@@ -12,10 +12,10 @@ $(document).ready(function(){
 	if (localStorage.getItem("weather") === null) {
 		// Never opened before
 		localStorage['weather'] = '10001';
-		localStorage['nimbus'] = '2.0';
+		localStorage['nimbus'] = '2.1';
 		$('#welcome').openModal();
-	} else if (localStorage.getItem("nimbus") != "2.0") {
-		localStorage['nimbus'] = '2.0';
+	} else if (localStorage.getItem("nimbus") != "2.1") {
+		localStorage['nimbus'] = '2.1';
 		$('#new').openModal();
 	}
 	
@@ -298,43 +298,74 @@ $(document).ready(function(){
 
 		// Radar Map
 
-		if (weather.country === "United States") {
-			if (localStorage.getItem("radar-location") !== "") {
-				var radarmap = "http://www.tephigram.weather.net/cgi-bin/razradar.cgi?zipcode=" + localStorage["radar-location"];
+		if (weather.country === 'United States') {
+			if (localStorage.getItem('radar-location') !== '') {
+				var radarmap = 'http://www.tephigram.weather.net/cgi-bin/razradar.cgi?zipcode=' + localStorage["radar-location"];
 				if ((localStorage.getItem("radar-player") === "true") && (supportType('video/webm') || supportType('video/mp4'))) {
 					$('.forecast-trigger').click(function() { $('.mapcontrol').hide(); $('.mapshare').hide(); });
 					$('.current-trigger').click(function() { $('.mapcontrol').hide(); $('.mapshare').hide(); });
 					$('.map-trigger').click(function() { $('.mapcontrol').show(); $('.mapshare').show(); });
-					var gfycat = "http://upload.gfycat.com/transcode?fetchUrl=" + encodeURIComponent(radarmap + "&width=" + $("#map").width() + "&height=" + $("#map").height() + ".gif");
+					// Generate string of date/time and add it to URL to avoid Gfy caching
+					var currentdate = new Date();
+					// Generate Gyfcat URL
+					var gfycat = "http://upload.gfycat.com/transcode?fetchUrl=" + encodeURIComponent(radarmap + "&width=" + $("#map").width() + "&height=" + $("#map").height() + ".gif" + "&time=" + currentdate.getMonth() + currentdate.getDate() + currentdate.getFullYear() + currentdate.getHours());
+					$('#map').prepend('<div class="toast map-toast">Requesting map...</div>');
 					$.getJSON(gfycat, function(data) {
-						console.log(data);
 						if (data.error != null) {
-							$('#map').html('<div class="card"><div class="card-content"><span class="card-title">Gfycat API Error</span><p>Gfycat was unable to load the radar map, and reported this error:</p><p class="error">' + data.error + '</p><p>You can try reopening Nimbus, or switching "New radar player" to off in the settings.</div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>');
+							$('.map-toast').fadeOut("slow", function() {});
+							$('#map').append('<div class="card"><div class="card-content"><span class="card-title">Gfycat API Error</span><p>Gfycat was unable to load the radar map, and reported this error:</p><p class="error">' + data.error + '</p><p>You can try reopening Nimbus, or switching "New radar player" to off in the settings.</div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>');
 						} else {
-							$('.map-preloader').fadeOut( "slow", function() {});
-							$("#map").html('<video id="mapvideo" muted="true" loop="true"><source src="http://zippy.gfycat.com/' + data.gfyName + '.webm" type="video/webm"><source src="http://zippy.gfycat.com/' + data.gfyName + '.mp4" type="video/mp4"></video>');
+							$('.map-toast').html('Downloading map...');
+							$('#map').append('<video id="mapvideo" muted="true" loop="true" webkit-playsinline><source src="http://zippy.gfycat.com/' + data.gfyName + '.webm" type="video/webm"><source src="http://zippy.gfycat.com/' + data.gfyName + '.mp4" type="video/mp4"></video>');
 							var mapvideo = document.getElementById("mapvideo");
-							$(".mapcontrol").html('<i class="mdi-av-play-arrow"></i>');
-							$('.mapshare').click(function() {
-								$('#shareurl').attr('value', 'http://gfycat.com/' + data.gfyName);
-								$('.sharelink').attr('href', 'http://gfycat.com/' + data.gfyName);
-								$('#share-modal').openModal();
-								$('#shareurl').select();
-							});
-							$('.mapcontrol').click(function() {
-								if (mapvideo.paused) {
-									$(".mapcontrol").html('<i class="mdi-av-pause"></i>');
-									mapvideo.play();
-								} else {
-									$(".mapcontrol").html('<i class="mdi-av-play-arrow"></i>');
-									mapvideo.pause();
-								}
+							$('#mapvideo').hide();
+							$('#mapvideo').on('loadedmetadata', function() {
+								$('.map-toast').html('Map loaded!');
+								$('.map-toast').fadeOut("slow", function() {});
+								$('.map-preloader').fadeOut("slow", function() {});
+								$('#mapvideo').show();
+								$('.mapcontrol').html('<i class="mdi-av-play-arrow"></i>');
+								$('.mapshare').click(function() {
+									$('#shareurl').attr('value', 'http://gfycat.com/' + data.gfyName);
+									$('.sharelink').attr('href', 'http://gfycat.com/' + data.gfyName);
+									$('#share-modal').openModal();
+									$('#shareurl').select();
+								});
+								$('.mapcontrol').click(function() {
+									if (mapvideo.paused) {
+										$(".mapcontrol").html('<i class="mdi-av-pause"></i>');
+										mapvideo.play();
+									} else {
+										$(".mapcontrol").html('<i class="mdi-av-play-arrow"></i>');
+										mapvideo.pause();
+									}
+								});
 							});
 						}
 					});
 				} else {
-					$('.map-preloader').hide();
-					$("#map").css("background", "url(" + radarmap + "&width=" + $("#map").width() + "&height=" + $("#map").height() + ") #000000 bottom center no-repeat");
+					$('.forecast-trigger').click(function() { $('.mapshare').hide(); });
+					$('.current-trigger').click(function() { $('.mapshare').hide(); });
+					$('.map-trigger').click(function() { $('.mapshare').show(); });
+					$('.mapshare').css('bottom', '16px');
+					$(window).load(function(){
+						$('#map').append('<img id="mapgif" src="' + radarmap + "&width=" + $("#map").width() + "&height=" + $("#map").height() + '" \>');
+						$('#mapgif').hide();
+						$('#map').prepend('<div class="toast map-toast">Loading GIF...</div>');
+						$('#mapgif').load(function(){
+							$('.map-toast').html('Map loaded!');
+							$('#mapgif').fadeIn("slow", function() {
+								$('.map-preloader').fadeOut("slow", function() {});
+								$('.map-toast').fadeOut("slow", function() {});
+							});
+						});
+					});
+					$('.mapshare').click(function() {
+						$('#shareurl').attr('value', radarmap + '&width=500&height=500');
+						$('.sharelink').attr('href', radarmap + '&width=500&height=500');
+						$('#share-modal').openModal();
+						$('#shareurl').select();
+					});
 				}
 		  
 			} else {
