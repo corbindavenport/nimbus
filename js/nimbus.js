@@ -7,7 +7,6 @@ $(document).ready(function(){
 	$('.mapcontrol').hide();
 	$('.mapshare').hide();
 	$('.map-preloader').show();
-	$('select').material_select();
 
 	if (localStorage.getItem("weather") === null) {
 		// Never opened before
@@ -15,7 +14,7 @@ $(document).ready(function(){
 		localStorage['nimbus'] = '2.2';
 		$('#welcome').openModal();
 	} else if (localStorage.getItem("nimbus") != "2.2") {
-		//localStorage['nimbus'] = '2.2';
+		localStorage['nimbus'] = '2.2';
 		$('#new').openModal();
 	}
 
@@ -63,8 +62,8 @@ $(document).ready(function(){
 	// Read values of settings from localStorage
 
 	$("#location").val(localStorage['weather']);
-	$("#unit").val(localStorage['unit']);
-	$("#radar-location").val(localStorage['radar-location']);
+	$("#unit").val(localStorage['unit']).change();
+	$("#radar-location").val(localStorage['radar-location']).change();
 	if (!(supportType('video/webm') || supportType('video/mp4')) || (($.browser.mozilla) && (navigator.userAgent.indexOf("Mobile") > -1))) {
 		localStorage['radar-player'] = 'false';
 		$("#radar-player").prop('disabled', true);
@@ -203,11 +202,6 @@ $(document).ready(function(){
 			}
 			localStorage['color'] = $("#color").val();
 			localStorage['bg'] = $("#bg").val();
-			if ($('#analytics').is(':checked')) {
-				localStorage['analytics'] = "true";
-			} else {
-				localStorage['analytics'] = "false";
-			}
 			window.location.replace('index.html');
 		} else {
 			toast('Enter a valid location!', 3000, 'rounded');
@@ -435,6 +429,7 @@ $(document).ready(function(){
 // Display everything
 
 $(window).load(function(){
+	$('select').material_select();
 	$('.nimbus-preloader').fadeOut( "slow", function() {});
 	$('#current').fadeIn( "slow", function() {});
 	$("#tabs").css("visibility","visible");
