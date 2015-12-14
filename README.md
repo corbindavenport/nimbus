@@ -15,6 +15,10 @@ Nimbus is a simple multi-platform weather app. It's designed to only give you th
 Nimbus is open source under the GPLv3 license. Nimbus is available on Windows 7 and up (32-bit & 64-bit), the Chrome Web Store, Google Play Store for Android 4.0+ devices, and the Firefox Marketplace.
 
 ---------------------------------------------------------
+__New in Nimbus 2.2.1:__
+* Fixed bug where 'Whats New' popup would appear every time the app was opened.
+* Fixed bugs where some settings wouldn't load
+
 __New in Nimbus 2.2:__
 * Nimbus now has more options for sharing the current weather map.
 * More detailed error messages where possible.
