@@ -6,9 +6,10 @@
 	<script type="text/javascript" src="js/materialize.min.js"></script>
 	<script type="text/javascript" src="js/jquery.simpleWeather.min.js"></script>
 	<script type="text/javascript" src="js/farbtastic.min.js"></script>
+	<script type="text/javascript" src="js/jquery.browser.min.js"></script>
 	<link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection"/>
 	<link type="text/css" rel="stylesheet" href="css/ol.css" media="screen,projection"/>
-	<link type="text/css" rel="stylesheet" href="css/nimbus.min.css" media="screen,projection"/>
+	<link type="text/css" rel="stylesheet" href="css/nimbus.css" media="screen,projection"/>
 	<link type="text/css" rel="stylesheet" href="css/weather-icons.min.css" media="screen,projection"/>
 	<title>Nimbus</title>
 	<link rel="apple-touch-icon" sizes="57x57" href="img/apple-touch-icon-57x57.png">
@@ -43,16 +44,6 @@
 	</div>
 	<div class="modal-footer">
 		<a class="waves-effect btn-flat modal-close">Continue</a>
-	</div>
-</div>
-
-<div id="share" class="modal">
-	<div class="modal-content share-content">
-		<div class="progress"><div class="indeterminate"></div></div>
-		<p>Generating radar image mirror on Imgur...</p>
-	</div>
-	<div class="modal-footer share-footer">
-		<a class="waves-effect btn-flat modal-close">Close</a>
 	</div>
 </div>
 
@@ -128,10 +119,11 @@
 <div id="new" class="modal modal-fixed-footer">
 	<div class="modal-content">
 		<h4>What's new</h4>
-		<p>Nimbus 2.1 includes some minor improvements to make it better than ever. Here's some of the improvements in this update.</p>
-		<p><u>Updated radar player</u>: The new radar map player introduced in 2.0 has been updated to fix loading and playback problems. The old player has also recieved improvements and minor fixes.</p>
-		<p><u>Faster loading</u>: Nimbus 2.1 uses asynchronous loading to enhance performance, especially when using the old radar player.</p>
-		<p><i>And lots of bug fixes and small improvements!</i></p>
+		<p>Nimbus now has more options for sharing the current weather map.</p>
+		<p>More detailed error messages where possible.</p>
+		<p>Fixes dozens of bugs with Firefox OS.</p>
+		<p>Updated to support new <a href="http://www.weather.net/">Freese-Notis Weather</a> API for radar maps.</p>
+		<p><i>And lots of other bug fixes and small improvements!</i></p>
 	</div>
 	<div class="modal-footer">
 		<a class="waves-effect btn-flat modal-close">Close</a>
@@ -154,7 +146,7 @@
 	</div>
 	<div class="modal-footer">
 	<a href="http://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=4SZVSMJKDS35J&lc=US&item_name=Nimbus%20Donation&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted" target="_blank" class="waves-effect btn-flat">Continue</a>
-	<a class="waves-effect btn-flat modal-close">Cancel</a>
+	<a class="waves-effect btn-flat modal-close">Close</a>
 	</div>
 </div>
 
@@ -173,8 +165,8 @@
 	<div class="modal-content">
 		<b>Nimbus Privacy Policy</b>
 		<p>Weather data is retrieved from Yahoo Weather, which is subject to the <a href="https://info.yahoo.com/privacy/us/yahoo/weather/details.html" target="_blank">Yahoo Weather Privacy Policy</a>. Note that the only data sent online is your ZIP Code, which is used to retrieve weather data. The weather radar is retrieved from Freese-Notis Weather, which is subject to their <a href="http://www.weather.net/privacy/" target="_blank">Privacy Policy</a>.</p>
-		<p>Nimbus uses Google Analytics by default, which is a web analysis service provided by Google. This is used by the developer(s) of Nimbus to determine how users interact with Nimbus, and help develop the app to better suit it's users. Google utilizes the data collected to track and examine the use of Nimbus, to prepare reports on its activities and share them with other Google services. Google may use the data collected to contextualize and personalize the ads of its own advertising network. The use of Google Analytics is subject to Google's Privacy Policy, which can be found <a href="http://www.google.com/intl/en/policies/privacy/" target="_blank">here</a>. However, all Google Analytics services can be completely disabled by the user in the Nimbus app settings. Furthermore, none of your app settings (ZIP code, unit of measurement, theme, etc) are sent through Analytics.</p>
-		<p>Nibmus includes functionality to share the current weather conditions for the specified location through Twitter and Tumblr. By sharing this information through Twitter and Tumblr, you are subject to the privacy policies of <a href="https://twitter.com/privacy" target="_blank">Twitter</a> and/or <a href="https://www.tumblr.com/policy/en/privacy" target="_blank">Tumblr</a>. The current temperature, current weather conditions, and the currently specified location are passed to those services only when one of the share buttons is selected.</p>
+		<p>Nimbus uses Google Analytics, which is a web analysis service provided by Google. This is used by the developer(s) of Nimbus to determine how users interact with Nimbus, and help develop the app to better suit it's users. Google utilizes the data collected to track and examine the use of Nimbus, to prepare reports on its activities and share them with other Google services. Google may use the data collected to contextualize and personalize the ads of its own advertising network. The use of Google Analytics is subject to Google's Privacy Policy, which can be found <a href="http://www.google.com/intl/en/policies/privacy/" target="_blank">here</a>. None of your app settings (ZIP code, unit of measurement, theme, etc) are sent through Analytics.</p>
+		<p>Nibmus includes functionality to share the current weather conditions and radar image for the specified location through Twitter. By sharing this information through Twitter and Tumblr, you are subject to the privacy policies of whichever service you shared it to. The current temperature, current weather conditions, the currently specified location, and/or the current radar image (depending on which share button was selected) are passed to those services only when one of the share buttons is selected.</p>
 	</div>
 	<div class="modal-footer">
 		<a class="waves-effect btn-flat modal-close">Close</a>
@@ -182,14 +174,14 @@
 </div>
 
 <div id="share-modal" class="modal">
+</div>
+
+<div id="html5modal" class="modal">
 	<div class="modal-content">
-		<b>This is a mirror to the current radar map.</b>
-		<div class="input-field col s12">
-          <input id="shareurl" type="text" value="Loading...">
-        </div>
+		<p>HTML5 video playback is not supported on your device or browser, so the new radar player has been disabled.</p>
 	</div>
-	<div class="modal-footer share-footer">
-		<a class="waves-effect btn-flat modal-close">Close</a><a href="#" target="_blank" class="waves-effect btn-flat sharelink">Open Link</a>
+	<div class="modal-footer">
+		<a class="waves-effect btn-flat modal-close">Close</a>
 	</div>
 </div>
 
@@ -216,11 +208,8 @@
 		<li class="settings-item picker-item">Pick color from Color Picker</li>
 		<li class="settings-item color-reset">Reset color to default</li>
 		<li class="settings-item background-item">Change background image</li>
-		<li class="settings-item title"><b>Privacy</b></li>
-		<li class="settings-item"><div>Analytics<a href="#!" class="secondary-content"><div class="switch"><label>Off<input type="checkbox" id="analytics"><span class="lever"></span>On</label></div></a></div></li>
-		<li class="settings-item privacy">Privacy Policy</li>
-		<li class="settings-item title"><b>About Nimbus 2.1</b></li>
-		<li class="settings-item">Nimbus is developed by Corbin Davenport and licensed under the GPLv3 license. It uses components of <a href="http://jquery.com/" class="title" target="_blank">jQuery</a>, <a href="http://materializecss.com/" class="title" target="_blank">Materialize</a>, <a href="http://simpleweatherjs.com/" class="title" target="_blank">SimpleWeather</a>, <a href="http://acko.net/blog/farbtastic-jquery-color-picker-plug-in/" class="title" target="_blank">Farbastic</a>, <a href="http://gfycat.com/api" class="title" target="_blank">Gfycat API</a>, and <a href="http://erikflowers.github.io/weather-icons/" class="title" target="_blank">Weather Icons</a>.</li>
+		<li class="settings-item title"><b>About Nimbus 2.2</b></li>
+		<li class="settings-item">Nimbus is developed by Corbin Davenport and licensed under the GPLv3 license. It uses components of <a href="http://jquery.com/" class="title" target="_blank">jQuery</a>, <a href="http://materializecss.com/" class="title" target="_blank">Materialize</a>, <a href="http://simpleweatherjs.com/" class="title" target="_blank">SimpleWeather</a>, <a href="http://acko.net/blog/farbtastic-jquery-color-picker-plug-in/" class="title" target="_blank">Farbastic</a>, <a href="http://gfycat.com/api" class="title" target="_blank">Gfycat API</a>, <a href="https://github.com/gabceb/jquery-browser-plugin" class="title" target="_blank">jQuery Browser Plugin</a>, and <a href="http://erikflowers.github.io/weather-icons/" class="title" target="_blank">Weather Icons</a>.</li>
 		<li class="settings-item twitterlink">Nimbus on Twitter<a class="secondary-content"><i class="mdi-content-send"></i></a></li>
 		<li class="settings-item googlelink">Nimbus on Google+<a class="secondary-content"><i class="mdi-content-send"></i></a></li>
 		<li class="settings-item githublink">Nimbus on GitHub<a class="secondary-content"><i class="mdi-content-send"></i></a></li>
@@ -228,6 +217,7 @@
 		<li class="settings-item">If you find Nimbus useful, please donate to support continued development. It would mean a lot!</li>
 		<li class="settings-item paypal">Donate via PayPal</li>
 		<li class="settings-item bitcoin">Donate via Bitcoin</li>
+		<li class="settings-item privacy">Privacy Policy</li>
 	</ul>
 </div>
 
@@ -283,7 +273,7 @@
 
 <a class="btn-floating btn-large waves-effect waves-light mapshare"><i class="mdi-social-share"></i></a>
 
-<script type="text/javascript" src="js/nimbus.min.js"></script>
+<script type="text/javascript" src="js/nimbus.js"></script>
 
 </body>
 </html>
