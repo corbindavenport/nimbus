@@ -12,17 +12,17 @@ $(document).ready(function(){
 	if (localStorage.getItem("weather") === null) {
 		// Never opened before
 		localStorage['weather'] = '10001';
-		localStorage['nimbus'] = '2.1';
+		localStorage['nimbus'] = '2.2';
 		$('#welcome').openModal();
-	} else if (localStorage.getItem("nimbus") != "2.1") {
-		localStorage['nimbus'] = '2.1';
+	} else if (localStorage.getItem("nimbus") != "2.2") {
+		//localStorage['nimbus'] = '2.2';
 		$('#new').openModal();
 	}
-	
+
 	if (localStorage.getItem("unit") === null) {
 		localStorage['unit'] = 'f';
 	}
-	
+
 	if (localStorage.getItem("radar-location") === null) {
 		localStorage['radar-location'] = '';
 	}
@@ -42,13 +42,9 @@ $(document).ready(function(){
 		localStorage['bg'] = '';
 	}
 
-	if (localStorage.getItem("analytics") === null || localStorage.getItem("analytics") === "yes") {
-		localStorage['analytics'] = 'true';
-	}
-
 	// Test HTML5 radar map support
 
-	function supportType(type) { 
+	function supportType(type) {
 		var video = document.createElement('video');
 		if (video.canPlayType(type)) {
 			return true;
@@ -57,39 +53,45 @@ $(document).ready(function(){
 		}
 	}
 
+	// Fixes for Firefox OS
+
+	if (($.browser.mozilla) && ($.browser.version < "32.0") && (navigator.userAgent.indexOf("Mobile") > -1)) {
+		alert("You are running an older version of Firefox OS.\n\nNimbus may work, but it is designed for Firefox OS 2.0 and higher. Please update your device if possible.\n\nThis warning will not be shown again.");
+		localStorage["oldalert"] = "completed";
+	}
+
 	// Read values of settings from localStorage
 
 	$("#location").val(localStorage['weather']);
 	$("#unit").val(localStorage['unit']);
 	$("#radar-location").val(localStorage['radar-location']);
-	if (localStorage.getItem("radar-player") === "true") {
-		$("#radar-player").prop('checked', true);
+	if (!(supportType('video/webm') || supportType('video/mp4')) || (($.browser.mozilla) && (navigator.userAgent.indexOf("Mobile") > -1))) {
+		localStorage['radar-player'] = 'false';
+		$("#radar-player").prop('disabled', true);
+		$('#radar-player').parent().parent().click(function() {
+			$('#html5modal').openModal();
+		});
 	} else {
-		$("#radar-player").prop('checked', false);
-		if (!(supportType('video/webm') || supportType('video/mp4'))) {
-			$("#radar-player").prop('disabled', true);
-			$('#radar-player').parent().parent().click(function() {
-				Materialize.toast('HTML5 not supported!', 3000, 'rounded');
-			});
+		if (localStorage.getItem("radar-player") === "true") {
+			$("#radar-player").prop('checked', true);
+		} else {
+			$("#radar-player").prop('checked', false);
 		}
 	}
 	$("#color").val(localStorage['color']);
 	$("#bg").val(localStorage['bg']);
-	$("#analytics").prop('checked', JSON.parse(localStorage['analytics']));
-	
+
 	// Google Analytics
 
-	if (localStorage.getItem("analytics") == "true") {
-		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		  })(window,document,'script','http://www.google-analytics.com/analytics.js','ga');
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','http://www.google-analytics.com/analytics.js','ga');
 
-		  ga('create', 'UA-59452245-1', 'auto');
-		  ga('send', 'pageview');
-	}
+	  ga('create', 'UA-59452245-1', 'auto');
+	  ga('send', 'pageview');
 
-	// Set background color
+	// Set background image
 
 	if (localStorage.getItem("bg").length > 0) {
 		$(".content").css("background", "url(" + localStorage.getItem("bg") + ") center no-repeat", "important");
@@ -103,7 +105,7 @@ $(document).ready(function(){
 	$(".credit").css("color", localStorage['color'], 'important');
 	$(".title").css("color", localStorage['color'], 'important');
 	$(".secondary-content").css("color", localStorage['color'], 'important');
-	
+
 	// Set buttons color
 
 	$(".settings-save").css("background", localStorage['color'], 'important');
@@ -156,7 +158,6 @@ $(document).ready(function(){
 		localStorage['radar-player'] = 'true';
 		localStorage['color'] = '#3ca2eb';
 		localStorage['bg'] = '';
-		localStorage['analytics'] = 'true';
 		window.location.replace('index.html');
 	});
 	$('.radar-location-item').click(function() {
@@ -282,25 +283,22 @@ $(document).ready(function(){
 	success: function(weather) {
 
 		// Fill content
-		current = '<div class="card"><div class="card-content"><span class="card-title">' + weather.city + ', ' + weather.region + '</span><table><tr><th class="weather-icon"><i class="wi ' + getIcon(weather.code) + '"></i></th><th class="weather-info"><span class="temp">' + weather.temp + '&deg;' + weather.units.temp + '</span><br />' + weather.high + '&deg;' + weather.units.temp + ' / ' + weather.low + '&deg;' + weather.units.temp + '</th></tr></table><div class="weather-updated">Last updated ' + weather.updated + '</div></div></div><div class="card"><div class="card-content"><span class="card-title">Winds</span><p><b>Wind chill:</b> ' + weather.wind.chill + '&deg;' + weather.units.temp + '<p><b>Speed:</b> ' + weather.wind.speed + ' ' + weather.units.speed + ' ' + weather.wind.direction + '</div></div><div class="card"><div class="card-content"><span class="card-title">Daylight</span><p><b>Sunrise:</b> ' + weather.sunrise + '</p><p><b>Sunset:</b> ' + weather.sunset + '</p><p><b>Visibility:</b> ' + weather.visibility + ' ' + weather.units.distance + '</p></div></div><div class="card"><div class="card-content"><div class="row"><button type="submit" name="action" class="btn-flat col s12 m6" id="share-twitter">Share on Twitter<i class="mdi-content-send right"></i></button><button type="submit" name="action" class="btn-flat col s12 m6" id="share-tumblr">Share on Tumblr<i class="mdi-content-send right"></i></button></div></div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>';
+		current = '<div class="card"><div class="card-content"><span class="card-title">' + weather.city + ', ' + weather.region + '</span><table><tr><th class="weather-icon"><i class="wi ' + getIcon(weather.code) + '"></i></th><th class="weather-info"><span class="temp">' + weather.temp + '&deg;' + weather.units.temp + '</span><br />' + weather.high + '&deg;' + weather.units.temp + ' / ' + weather.low + '&deg;' + weather.units.temp + '</th></tr></table><div class="weather-updated">Last updated ' + weather.updated + '</div></div></div><div class="card"><div class="card-content"><span class="card-title">Winds</span><p><b>Wind chill:</b> ' + weather.wind.chill + '&deg;' + weather.units.temp + '<p><b>Speed:</b> ' + weather.wind.speed + ' ' + weather.units.speed + ' ' + weather.wind.direction + '</div></div><div class="card"><div class="card-content"><span class="card-title">Daylight</span><p><b>Sunrise:</b> ' + weather.sunrise + '</p><p><b>Sunset:</b> ' + weather.sunset + '</p><p><b>Visibility:</b> ' + weather.visibility + ' ' + weather.units.distance + '</p></div></div><div class="card"><a class="btn-flat btn-large waves-effect share-twitter" href="#">Share on Twitter<i class="mdi-content-send right"></i></a></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>';
 		$("#current").append(current);
 		forecast = '<div id="forecast-container"><div class="card forecast1"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[0].day + '</span><table><tr><th class="forecast-icon"><i class="wi ' + getIcon(weather.forecast[0].code) + '"></i></th><th class="forecast-info"><span class="temp">' + weather.forecast[0].high + '&deg;' + weather.units.temp + ' / ' + weather.forecast[0].low + '&deg;' + weather.units.temp + '</span><br />' + weather.forecast[0].text + '</th></tr></table></div></div><div class="card forecast2"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[1].day + '</span><table><tr><th class="forecast-icon"><i class="wi ' + getIcon(weather.forecast[1].code) + '"></i></th><th class="forecast-info"><span class="temp">' + weather.forecast[1].high + '&deg;' + weather.units.temp + ' / ' + weather.forecast[1].low + '&deg;' + weather.units.temp + '</span><br />' + weather.forecast[1].text + '</th></tr></table></div></div><div class="card forecast3"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[2].day + '</span><table><tr><th class="forecast-icon"><i class="wi ' + getIcon(weather.forecast[2].code) + '"></i></th><th class="forecast-info"><span class="temp">' + weather.forecast[2].high + '&deg;' + weather.units.temp + ' / ' + weather.forecast[2].low + '&deg;' + weather.units.temp + '</span><br />' + weather.forecast[2].text + '</th></tr></table></div></div><div class="card forecast4"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[3].day + '</span><table><tr><th class="forecast-icon"><i class="wi ' + getIcon(weather.forecast[3].code) + '"></i></th><th class="forecast-info"><span class="temp">' + weather.forecast[3].high + '&deg;' + weather.units.temp + ' / ' + weather.forecast[3].low + '&deg;' + weather.units.temp + '</span><br />' + weather.forecast[3].text + '</th></tr></table></div></div><div class="card forecast5"><div class="card-content"><span class="card-title">Forecast on ' + weather.forecast[4].day + '</span><table><tr><th class="forecast-icon"><i class="wi ' + getIcon(weather.forecast[4].code) + '"></i></th><th class="forecast-info"><span class="temp">' + weather.forecast[4].high + '&deg;' + weather.units.temp + ' / ' + weather.forecast[4].low + '&deg;' + weather.units.temp + '</span><br />' + weather.forecast[4].text + '</th></tr></table></div></div></div>';
 		$("#forecast").append(forecast);
 
-		// Share buttons
+		// Share button
 		var socialmessage = "It's currently " + weather.temp + "°" + weather.units.temp + " and " + weather.currently + " in " + weather.city + " right now!";
-		$('#share-twitter').click(function() {
+		$('.share-twitter').click(function() {
 			window.open("https://twitter.com/intent/tweet?via=NimbusWeather&text=" + encodeURIComponent(socialmessage), "Twitter", "width=500,height=300,scrollbars=0");
 		});
-		$('#share-tumblr').click(function() {
-			window.open("https://www.tumblr.com/share?s=&v=3&t=" + encodeURIComponent(socialmessage), "Tumblr", "width=500,height=300,scrollbars=0");
-		});	
 
 		// Radar Map
 
 		if (weather.country === 'United States') {
 			if (localStorage.getItem('radar-location') !== '') {
-				var radarmap = 'http://www.tephigram.weather.net/cgi-bin/razradar.cgi?zipcode=' + localStorage["radar-location"];
+				var radarmap = 'http://www.adiabatic.weather.net/cgi-bin/razradar.cgi?zipcode=' + localStorage["radar-location"];
 				if ((localStorage.getItem("radar-player") === "true") && (supportType('video/webm') || supportType('video/mp4'))) {
 					$('.forecast-trigger').click(function() { $('.mapcontrol').hide(); $('.mapshare').hide(); });
 					$('.current-trigger').click(function() { $('.mapcontrol').hide(); $('.mapshare').hide(); });
@@ -313,10 +311,21 @@ $(document).ready(function(){
 					$.getJSON(gfycat, function(data) {
 						if (data.error != null) {
 							$('.map-toast').fadeOut("slow", function() {});
-							$('#map').append('<div class="card"><div class="card-content"><span class="card-title">Gfycat API Error</span><p>Gfycat was unable to load the radar map, and reported this error:</p><p class="error">' + data.error + '</p><p>You can try reopening Nimbus, or switching "New radar player" to off in the settings.</div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>');
+							$('.map-preloader').fadeOut("slow", function() {});
+							if (data.error === "Unable to encode gif") {
+								$('#map').append('<div class="card"><div class="card-content"><span class="card-title">Freese-Notis Error</span><p>There was an error trying to load the weather map from Freese-Notis Weather. There is nothing Nimbus can do until they fix their API.</p></div></div><div class="card"><div class="card-image"><img src="http://sirocco.accuweather.com/sat_mosaic_640x480_public/ei/iseun.gif"></div><div class="card-content"><p>Current national radar from AccuWeather.</p></div></div>');
+							} else {
+								$('#map').append('<div class="card"><div class="card-content"><span class="card-title">Gfycat API Error</span><p>Gfycat was unable to load the radar map, and reported this error:</p><p class="error">' + data.error + '</p><p>You can try reopening Nimbus, or switching "New radar player" to off in the settings.</div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>');
+							}
+							$('.mapcontrol').fadeOut("slow", function() {
+								$('.mapcontrol').remove();
+							});
+							$('.mapshare').fadeOut("slow", function() {
+								$('.mapshare').remove();
+							});
 						} else {
 							$('.map-toast').html('Downloading map...');
-							$('#map').append('<video id="mapvideo" muted="true" loop="true" webkit-playsinline><source src="http://zippy.gfycat.com/' + data.gfyName + '.webm" type="video/webm"><source src="http://zippy.gfycat.com/' + data.gfyName + '.mp4" type="video/mp4"></video>');
+							$('#map').append('<video id="mapvideo" autoplay muted loop webkit-playsinline><source src="http://zippy.gfycat.com/' + data.gfyName + '.webm" type="video/webm"><source src="http://zippy.gfycat.com/' + data.gfyName + '.mp4" type="video/mp4"></video>');
 							var mapvideo = document.getElementById("mapvideo");
 							$('#mapvideo').hide();
 							$('#mapvideo').on('loadedmetadata', function() {
@@ -326,17 +335,37 @@ $(document).ready(function(){
 								$('#mapvideo').show();
 								$('.mapcontrol').html('<i class="mdi-av-play-arrow"></i>');
 								$('.mapshare').click(function() {
-									$('#shareurl').attr('value', 'http://gfycat.com/' + data.gfyName);
-									$('.sharelink').attr('href', 'http://gfycat.com/' + data.gfyName);
 									$('#share-modal').openModal();
-									$('#shareurl').select();
 								});
+								$("#share-modal").html('<div class="collection"><a href="#" class="collection-item share-map-gfycat">Open on Gfycat</a><a href="#" class="collection-item share-map-twitter">Share on Twitter</a><a href="#" class="collection-item share-map-googleplus">Share on Google+</a><a href="#" class="collection-item share-map-facebook">Share on Facebook</a><a href="#" class="collection-item share-map-evernote">Save to Evernote</a></div><div class="modal-footer"><a class="waves-effect btn-flat modal-close">Close</a></div>');
+								$('.share-map-gfycat').click(function() {
+									window.open("http://gfycat.com/" + data.gfyName, "_blank");
+								});
+								$('.share-map-twitter').click(function() {
+									window.open("https://twitter.com/intent/tweet?via=NimbusWeather&text=http://zippy.gfycat.com/" + data.gfyName + ".gif", "Twitter", "width=500,height=300,scrollbars=0");
+								});
+								$('.share-map-googleplus').click(function() {
+									window.open("https://plus.google.com/share?url=http://zippy.gfycat.com/" + data.gfyName + ".gif", "Google+", "width=600,height=400,scrollbars=0");
+								});
+								$('.share-map-facebook').click(function() {
+									window.open("http://www.facebook.com/sharer.php?u=http://zippy.gfycat.com/" + data.gfyName + ".gif", "Facebook", "width=600,height=400,scrollbars=0");
+								});
+								$('.share-map-evernote').click(function() {
+									window.open("http://www.evernote.com/clip.action?url=http://zippy.gfycat.com/" + data.gfyName + ".gif", "Evernote", "width=600,height=400,scrollbars=0");
+								});
+								$(".collection-item").css("color", localStorage['color'], 'important');
+								mapvideo.play(); // Attempt to auto-play video, doesn't work on some mobile browsers
+								if (mapvideo.paused) {
+									$(".mapcontrol").html('<i class="mdi-av-play-arrow"></i>');
+								} else {
+									$(".mapcontrol").html('<i class="mdi-av-pause"></i>');
+								}
 								$('.mapcontrol').click(function() {
 									if (mapvideo.paused) {
-										$(".mapcontrol").html('<i class="mdi-av-pause"></i>');
+										$(".mapcontrol").children().addClass('mdi-av-pause').removeClass('mdi-av-play-arrow');
 										mapvideo.play();
 									} else {
-										$(".mapcontrol").html('<i class="mdi-av-play-arrow"></i>');
+										$(".mapcontrol").children().addClass('mdi-av-play-arrow').removeClass('mdi-av-pause');
 										mapvideo.pause();
 									}
 								});
@@ -348,8 +377,9 @@ $(document).ready(function(){
 					$('.current-trigger').click(function() { $('.mapshare').hide(); });
 					$('.map-trigger').click(function() { $('.mapshare').show(); });
 					$('.mapshare').css('bottom', '16px');
+					var radargif = radarmap + "&width=" + $("#map").width() + "&height=" + $("#map").height();
 					$(window).load(function(){
-						$('#map').append('<img id="mapgif" src="' + radarmap + "&width=" + $("#map").width() + "&height=" + $("#map").height() + '" \>');
+						$('#map').append('<img id="mapgif" src="' + radargif + '" \>');
 						$('#mapgif').hide();
 						$('#map').prepend('<div class="toast map-toast">Loading GIF...</div>');
 						$('#mapgif').load(function(){
@@ -361,13 +391,30 @@ $(document).ready(function(){
 						});
 					});
 					$('.mapshare').click(function() {
-						$('#shareurl').attr('value', radarmap + '&width=500&height=500');
-						$('.sharelink').attr('href', radarmap + '&width=500&height=500');
 						$('#share-modal').openModal();
-						$('#shareurl').select();
 					});
+					var sharedradargif = radarmap + "&width=500&height=500";
+					$("#share-modal").html('<div class="collection"><a href="#" class="collection-item share-map-gfycat">Open on Gfycat</a><a href="#" class="collection-item share-map-twitter">Share on Twitter</a><a href="#" class="collection-item share-map-googleplus">Share on Google+</a><a href="#" class="collection-item share-map-facebook">Share on Facebook</a><a href="#" class="collection-item share-map-evernote">Save to Evernote</a></div><div class="modal-footer"><a class="waves-effect btn-flat modal-close">Close</a></div>');
+					$('.share-map-gfycat').click(function() {
+						// Generate string of date/time and add it to URL to avoid Gfy caching
+						var currentdate = new Date();
+						window.open("http://gfycat.com/fetch/" + encodeURIComponent(sharedradargif + ".gif" + "&time=" + currentdate.getMonth() + currentdate.getDate() + currentdate.getFullYear() + currentdate.getHours()), "_blank");
+					});
+					$('.share-map-twitter').click(function() {
+						window.open("https://twitter.com/intent/tweet?via=NimbusWeather&text=" + sharedradargif, "Twitter", "width=500,height=300,scrollbars=0");
+					});
+					$('.share-map-googleplus').click(function() {
+						window.open("https://plus.google.com/share?url=" + sharedradargif, "Google+", "width=600,height=400,scrollbars=0");
+					});
+					$('.share-map-facebook').click(function() {
+						window.open("http://www.facebook.com/sharer.php?u=" + sharedradargif, "Facebook", "width=600,height=400,scrollbars=0");
+					});
+					$('.share-map-evernote').click(function() {
+						window.open("http://www.evernote.com/clip.action?url=" + sharedradargif, "Evernote", "width=600,height=400,scrollbars=0");
+					});
+					$(".collection-item").css("color", localStorage['color'], 'important');
 				}
-		  
+
 			} else {
 				$('#map').html('<div class="card"><div class="card-content"><span class="card-title">Map not configured</span><p>Due to an API limitation, you need to configure the location for the radar map seperately. Go to the settings and set a radar location.</p></div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>');
 			}
@@ -382,7 +429,7 @@ $(document).ready(function(){
 		$("#map").html('<div class="card"><div class="card-content"><span class="card-title">Error</span><p>There was an error loading the radar map.</p></div><div class="card-action"><a href="javascript:window.location.replace(' + index + ');">Try again</a></div></div><div class="card"><a class="btn-flat btn-large waves-effect settings-trigger" href="#">Open Settings</a></div>');
 	}
 	});
-	
+
 });
 
 // Display everything
@@ -390,6 +437,7 @@ $(document).ready(function(){
 $(window).load(function(){
 	$('.nimbus-preloader').fadeOut( "slow", function() {});
 	$('#current').fadeIn( "slow", function() {});
+	$("#tabs").css("visibility","visible");
 	$('#settings-trigger').fadeIn( "slow", function() {});
 	$('#colorpicker').farbtastic('#color');
 });
